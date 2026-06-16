@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bíblia CCB — Estudo & Áudio</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Inter:wght@300;400;500;600&family=Cinzel:wght@400;600&display=swap');
+:root{
+  --cream:#F7F3EC;--parchment:#EDE5D4;--ink:#1C1814;--sepia:#5C4A2A;
+  --gold:#B8922A;--gold-lt:#D4AC50;--rust:#8B3A1A;--muted:#7A6A54;
+  --border:#C8B898;--white:#FDFAF5;--shadow:rgba(28,24,20,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+header{background:var(--ink);padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px var(--shadow)}
+.logo-mark{width:34px;height:34px;border:2px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Cinzel',serif;color:var(--gold);font-size:15px;font-weight:600}
+header h1{font-family:'Cinzel',serif;color:var(--white);font-size:15px;font-weight:600;letter-spacing:.04em}
+header p{font-size:9px;color:var(--gold-lt);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.badge-arc{margin-left:auto;background:var(--gold);color:var(--ink);font-family:'Cinzel',serif;font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0}
+.menu-toggle{background:rgba(255,255,255,.08);border:none;border-radius:6px;color:var(--white);font-size:18px;cursor:pointer;width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 62px)}
+aside{background:var(--parchment);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-header{padding:14px;border-bottom:1px solid var(--border)}
+.sidebar-header label{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px}
+select{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--white);font-family:'Inter',sans-serif;font-size:13px;color:var(--ink);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235C4A2A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.chapter-list{flex:1;overflow-y:auto;padding:10px 8px}
+.chapter-list::-webkit-scrollbar{width:4px}
+.chapter-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.chapter-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.ch-btn{aspect-ratio:1;border:1px solid var(--border);border-radius:6px;background:var(--white);font-size:11px;font-weight:500;color:var(--sepia);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.ch-btn.active{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
+.ch-btn.has-study{border-color:var(--rust);border-width:2px}
+main{display:flex;flex-direction:column;overflow:hidden}
+.content-area{flex:1;overflow-y:auto;padding:24px 16px}
+.audio-bar{background:var(--ink);padding:12px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.play-btn{width:42px;height:42px;border-radius:50%;border:2px solid var(--gold);background:transparent;color:var(--gold);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.play-btn:active{background:var(--gold);color:var(--ink)}
+.play-btn:disabled{opacity:.4;cursor:not-allowed}
+.audio-info{flex:1;min-width:0}
+.audio-title{font-size:11px;font-weight:600;color:var(--gold-lt);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.audio-status{font-size:10px;color:#888;margin-top:2px}
+.speed-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#aaa;font-size:10px;font-weight:600;padding:5px 7px;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.speed-btn.active-speed{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.book-title{font-family:'Cinzel',serif;font-size:22px;font-weight:600;color:var(--sepia);margin-bottom:3px}
+.chapter-label{font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px}
+.src-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:3px 9px;border-radius:10px;margin-bottom:16px;border:1px solid}
+.src-badge.local{background:rgba(34,139,34,.08);color:#1a6b1a;border-color:rgba(34,139,34,.2)}
+.src-badge.api{background:rgba(28,100,200,.08);color:#1a4c8b;border-color:rgba(28,100,200,.2)}
+.src-badge.offline{background:rgba(139,58,26,.08);color:var(--rust);border-color:rgba(139,58,26,.2)}
+.src-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:20px}
+.tab{padding:9px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.verses{font-family:'IM Fell English',serif;font-size:16px;line-height:1.9;color:var(--ink)}
+.verse{display:block;margin-bottom:4px;cursor:pointer;padding:3px 6px;border-radius:4px;transition:background .12s}
+.verse.reading{background:rgba(139,58,26,.12);border-left:3px solid var(--rust);padding-left:8px}
+.verse.highlight{background:rgba(184,146,42,.18)}
+.v-num{font-family:'Cinzel',serif;font-size:10px;font-weight:600;color:var(--gold);vertical-align:super;margin-right:3px;font-style:normal}
+.loading-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:40px 20px;color:var(--muted);font-size:13px;text-align:center}
+.spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.interp-card{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.interp-header{background:var(--sepia);padding:14px 16px;display:flex;align-items:center;gap:10px}
+.interp-icon{width:28px;height:28px;border:1.5px solid var(--gold-lt);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold-lt);font-size:13px;flex-shrink:0}
+.interp-header h3{font-family:'Cinzel',serif;color:var(--white);font-size:13px;font-weight:600}
+.interp-header p{color:rgba(255,255,255,.6);font-size:10px;margin-top:1px}
+.interp-body{padding:18px}
+.interp-loading{display:flex;flex-direction:column;align-items:center;gap:12px;padding:36px 20px;color:var(--muted);font-size:13px}
+.isec{margin-bottom:16px}
+.isec:last-child{margin-bottom:0}
+.isec h4{font-family:'Cinzel',serif;font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.isec p,.isec li{font-size:14px;line-height:1.7;color:#3C3020}
+.isec ul{padding-left:16px;display:flex;flex-direction:column;gap:5px}
+.key-verse{background:linear-gradient(135deg,rgba(184,146,42,.08),rgba(139,58,26,.06));border-left:3px solid var(--gold);padding:10px 14px;border-radius:0 6px 6px 0;font-family:'IM Fell English',serif;font-style:italic;font-size:15px;color:var(--sepia);margin:8px 0;line-height:1.6}
+.gen-btn{width:100%;padding:13px;background:var(--sepia);color:var(--gold-lt);border:none;border-radius:8px;font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:.06em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent}
+.gen-btn:active{background:var(--ink)}
+.gen-btn:disabled{opacity:.5;cursor:not-allowed}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;color:var(--muted);gap:14px}
+.empty-icon{font-size:44px;opacity:.4}
+.empty-state h3{font-family:'Cinzel',serif;font-size:15px;color:var(--sepia)}
+.empty-state p{font-size:12px;max-width:220px;line-height:1.6}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:150}
+.overlay.show{display:block}
+@media(max-width:640px){
+  .app{grid-template-columns:1fr}
+  aside{position:fixed;left:-100%;top:62px;width:80vw;height:calc(100vh - 62px);z-index:200;transition:left .25s;box-shadow:4px 0 20px var(--shadow)}
+  aside.open{left:0}
+  .content-area{padding:18px 14px}
+  .audio-bar{padding:10px 12px;gap:8px}
+  .book-title{font-size:20px}
+}
+@media(min-width:641px){.menu-toggle{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+  <div class="logo-mark">✦</div>
+  <div>
+    <h1>Bíblia CCB — Estudo & Áudio</h1>
+    <p>João Ferreira de Almeida · Revista e Corrigida</p>
+  </div>
+  <span class="badge-arc">ARC</span>
+</header>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+<div class="app">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <label>Livro</label>
+      <select id="bookSelect" onchange="onBookChange()"></select>
+    </div>
+    <div class="chapter-list">
+      <div class="chapter-grid" id="chapterGrid"></div>
+    </div>
+  </aside>
+  <main>
+    <div class="audio-bar">
+      <button class="play-btn" id="playBtn" onclick="toggleAudio()" disabled>▶</button>
+      <div class="audio-info">
+        <div class="audio-title" id="audioTitle">Selecione um capítulo</div>
+        <div class="audio-status" id="audioStatus">Toque em um capítulo para começar</div>
+      </div>
+      <button class="speed-btn active-speed" onclick="setSpeed(1,this)">1×</button>
+      <button class="speed-btn" onclick="setSpeed(1.25,this)">1.25×</button>
+      <button class="speed-btn" onclick="setSpeed(1.5,this)">1.5×</button>
+    </div>
+    <div class="content-area">
+      <div id="contentWrap">
+        <div class="empty-state">
+          <div class="empty-icon">📖</div>
+          <h3>Selecione um livro e capítulo</h3>
+          <p>Toque em ☰ para abrir o menu e escolher o livro.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// DADOS: capítulos embutidos (ARC) — offline garantido
+// ════════════════════════════════════════════════════════
+const LOCAL = {
+"Gênesis_1":["No princípio criou Deus os céus e a terra.","E a terra era sem forma e vazia; e havia trevas sobre a face do abismo; e o Espírito de Deus se movia sobre a face das águas.","E disse Deus: Haja luz. E houve luz.","E viu Deus que a luz era boa; e fez Deus separação entre a luz e as trevas.","E Deus chamou à luz dia e às trevas chamou noite. E foi a tarde e a manhã, o dia primeiro.","E disse Deus: Haja uma expansão no meio das águas, e haja separação entre águas e águas.","E fez Deus a expansão e separou as águas que estavam debaixo da expansão das águas que estavam sobre a expansão. E assim foi.","E Deus chamou à expansão céus. E foi a tarde e a manhã, o dia segundo.","E disse Deus: Ajuntem-se as águas debaixo dos céus num lugar; e apareça a parte seca. E assim foi.","E Deus chamou à parte seca terra, e ao ajuntamento das águas chamou mares. E viu Deus que era bom.","E disse Deus: Produza a terra erva verde, erva que dê semente, árvore frutífera que dê fruto segundo a sua espécie, cuja semente está nela sobre a terra. E assim foi.","E a terra produziu erva, erva dando semente conforme a sua espécie, e árvore frutífera cuja semente estava nela, conforme a sua espécie. E viu Deus que era bom.","E foi a tarde e a manhã, o dia terceiro.","E disse Deus: Haja luminares na expansão dos céus, para haver separação entre o dia e a noite; e sejam eles para sinais, e para estações, e para dias, e anos.","E sejam para luminares na expansão dos céus para iluminarem a terra. E assim foi.","E fez Deus os dois grandes luminares: o luminar maior para governar o dia, e o luminar menor para governar a noite; e fez as estrelas.","E Deus os pôs na expansão dos céus para iluminarem a terra,","E para governar o dia e a noite, e para haver separação entre a luz e as trevas. E viu Deus que era bom.","E foi a tarde e a manhã, o dia quarto.","E disse Deus: Produzam as águas abundantemente répteis de alma vivente; e voem as aves sobre a terra na face da expansão dos céus.","E Deus criou as grandes baleias, e todo réptil de alma vivente que as águas produziram abundantemente conforme as suas espécies, e toda ave de asas conforme a sua espécie. E viu Deus que era bom.","E Deus os abençoou, dizendo: Sede fecundos, e multiplicai-vos, e enchei as águas nos mares; e as aves se multipliquem na terra.","E foi a tarde e a manhã, o dia quinto.","E disse Deus: Produza a terra alma vivente conforme a sua espécie: gado, e répteis, e animais da terra conforme a sua espécie. E assim foi.","E fez Deus os animais da terra conforme a sua espécie, e o gado conforme a sua espécie, e todo réptil da terra conforme a sua espécie. E viu Deus que era bom.","E disse Deus: Façamos o homem à nossa imagem, conforme a nossa semelhança; e domine sobre os peixes do mar, e sobre as aves dos céus, e sobre o gado, e sobre toda a terra, e sobre todo réptil que se move sobre a terra.","E criou Deus o homem à sua imagem; à imagem de Deus o criou; homem e mulher os criou.","E Deus os abençoou, e Deus lhes disse: Sede fecundos e multiplicai-vos, e enchei a terra, e sujeitai-a; e dominai sobre os peixes do mar e sobre as aves dos céus, e sobre todo animal que se move sobre a terra.","E disse Deus: Eis que vos tenho dado toda erva que dá semente, que está sobre a face de toda a terra, e toda árvore, em que há fruto de árvore que dá semente; ser-vos-á para mantimento.","E a todo animal da terra, e a toda ave dos céus, e a todo réptil da terra, em que há alma vivente, toda erva verde será para mantimento. E assim foi.","E viu Deus tudo quanto tinha feito, e eis que era muito bom. E foi a tarde e a manhã, o dia sexto."],
+"Gênesis_2":["Assim foram acabados os céus e a terra e todo o seu exército.","E no sétimo dia descansou Deus de toda a sua obra que tinha feito.","E abençoou Deus o sétimo dia e o santificou; porque nele descansou de toda a sua obra que Deus criara e fizera.","Estas são as origens dos céus e da terra quando foram criados; no dia em que o SENHOR Deus fez a terra e os céus.","E toda a planta do campo antes que estivesse na terra, e toda a erva do campo antes que brotasse; porque o SENHOR Deus ainda não tinha feito chover sobre a terra, e não havia homem para lavrar a terra.","Mas um vapor subia da terra, e regava toda a face da terra.","E formou o SENHOR Deus o homem do pó da terra, e soprou em suas narinas o fôlego da vida; e o homem foi feito alma vivente.","E plantou o SENHOR Deus um jardim no Éden, do lado oriental; e pôs ali o homem que tinha formado.","E o SENHOR Deus fez brotar da terra toda a árvore agradável à vista, e boa para comida; e a árvore da vida no meio do jardim, e a árvore do conhecimento do bem e do mal.","E saía um rio do Éden para regar o jardim; e dali se dividia e se tornava em quatro braços.","O nome do primeiro é Pisom; este é o que rodeia toda a terra de Havilá, onde há ouro.","E o ouro dessa terra é bom; ali há bdélio e pedra de ônix.","E o nome do segundo rio é Giom; este é o que rodeia toda a terra de Cuche.","E o nome do terceiro rio é Tigre; este é o que vai para o leste da Assíria. E o quarto rio é o Eufrates.","E tomou o SENHOR Deus o homem, e o pôs no jardim do Éden para o lavrar e o guardar.","E ordenou o SENHOR Deus ao homem, dizendo: De toda a árvore do jardim comerás livremente;","Mas da árvore do conhecimento do bem e do mal, dela não comerás; porque no dia em que dela comeres, certamente morrerás.","E disse o SENHOR Deus: Não é bom que o homem esteja só; far-lhe-ei uma auxiliadora que lhe seja idônea.","E o SENHOR Deus formou da terra todo o animal do campo, e toda a ave dos céus, e os trouxe a Adão, para este ver como lhes chamaria; e tudo o que Adão chamou a toda a alma vivente, isso foi o seu nome.","E Adão pôs os nomes a todo o gado, e às aves dos céus, e a todo o animal do campo; mas para o homem não se achava uma auxiliadora que lhe fosse idônea.","Então o SENHOR Deus fez cair um sono pesado sobre Adão, e este adormeceu; e tomou uma das suas costelas, e fechou a carne no lugar dela;","E da costela que o SENHOR Deus tomou do homem, formou uma mulher, e trouxe-a ao homem.","E disse Adão: Esta é agora osso dos meus ossos, e carne da minha carne; esta será chamada mulher, porquanto do homem foi tomada.","Portanto deixará o homem o seu pai e a sua mãe, e se unirá à sua mulher, e serão ambos uma carne.","E ambos estavam nus, o homem e a sua mulher, e não se envergonhavam."],
+"Salmos_23":["O SENHOR é o meu pastor; nada me faltará.","Ele me faz repousar em pastos verdejantes. Leva-me para junto das águas de descanso.","Refrigera a minha alma. Guia-me pelas veredas da justiça por amor do seu nome.","Ainda que eu andasse pelo vale da sombra da morte, não temeria mal algum, porque tu estás comigo; o teu cajado e o teu bordão me consolam.","Preparas uma mesa perante mim na presença dos meus adversários. Unges a minha cabeça com óleo; o meu cálice transborda.","Certamente que a bondade e a misericórdia me seguirão todos os dias da minha vida; e habitarei na casa do SENHOR por longos dias."],
+"Salmos_91":["Aquele que habita no esconderijo do Altíssimo, e que à sombra do Onipotente se hospeda,","Diz ao SENHOR: Ele é o meu Deus, o meu refúgio, a minha fortaleza, e nele confiarei.","Porque ele te livrará do laço do passarinheiro, e da peste perniciosa.","Com as suas penas te cobrirá, e debaixo das suas asas te abrigarás; a sua verdade será o teu escudo e broquel.","Não te assombrarás do espanto noturno, nem da seta que voa de dia,","Nem da peste que anda nas trevas, nem da mortandade que assola ao meio-dia.","Mil cairão ao teu lado, e dez mil à tua direita; porém não chegará a ti.","Somente com os teus olhos olharás, e verás a recompensa dos ímpios.","Porque tu, SENHOR, és o meu refúgio; fizeste o Altíssimo a tua habitação.","Nenhum mal te sucederá, e praga alguma chegará à tua tenda.","Porque aos seus anjos dará ordem acerca de ti, para te guardarem em todos os teus caminhos.","Eles te sustentarão nas suas mãos, para que não tropeces com o teu pé em alguma pedra.","Pisarás o leão e o áspide; calcarás aos pés o leãozinho e a serpente.","Pois nele pôs o seu amor, também o livrarei; pô-lo-ei a salvo, porque conheceu o meu nome.","Ele me invocará, e eu lhe responderei; na tribulação estarei com ele; livrá-lo-ei, e o glorificarei.","Com longura de dias o satisfarei, e lhe mostrarei a minha salvação."],
+"Salmos_119":["Bem-aventurados os íntegros de caminho, os que andam na lei do SENHOR.","Bem-aventurados os que guardam os seus testemunhos, e que o buscam com todo o coração.","E os que não cometem iniqüidade, antes andam nos seus caminhos.","Tu ordenaste os teus preceitos, para que os guardemos com diligência.","Oxalá que os meus caminhos fossem direitos para guardar os teus estatutos.","Então não ficaria confundido quando atentasse para todos os teus mandamentos.","Louvar-te-ei com retidão de coração, quando aprender os teus juízos de justiça.","Guardarei os teus estatutos; não me desampares de todo.","Com o quê purificará o jovem o seu caminho? Guardando-o conforme a tua palavra.","Com todo o meu coração te busquei; não me deixes errar dos teus mandamentos.","Escondi as tuas palavras no meu coração, para eu não pecar contra ti.","Bendito és tu, SENHOR; ensina-me os teus estatutos.","Com os meus lábios tenho declarado todos os juízos da tua boca.","No caminho dos teus testemunhos me alegrei como em todos os tesouros.","Meditarei nos teus preceitos, e atentarei para os teus caminhos.","Alegrar-me-ei nos teus estatutos; não me esquecerei da tua palavra."],
+"João_1":["No princípio era o Verbo, e o Verbo estava com Deus, e o Verbo era Deus.","Este estava no princípio com Deus.","Todas as coisas foram feitas por ele, e sem ele nada do que foi feito se fez.","Nele estava a vida, e a vida era a luz dos homens.","E a luz resplandece nas trevas, e as trevas não a compreenderam.","Houve um homem enviado por Deus, cujo nome era João.","Este veio para testemunho, para que testificasse acerca da luz, para que todos cressem por ele.","Não era ele a luz, mas veio para testificar acerca da luz.","Ali estava a luz verdadeira que ilumina todo o homem que vem ao mundo.","Ele estava no mundo, e o mundo foi feito por ele, e o mundo não o conheceu.","Veio para os seus, e os seus não o receberam.","Mas a todos os que o receberam, deu-lhes o poder de serem feitos filhos de Deus, aos que crêem no seu nome;","Os quais não nasceram do sangue, nem da vontade da carne, nem da vontade do homem, mas de Deus.","E o Verbo se fez carne, e habitou entre nós, e vimos a sua glória, como a glória do unigênito do Pai, cheio de graça e de verdade.","João testificou dele, e clamou, dizendo: Era este de quem eu dizia: O que vem depois de mim é preferido a mim, porque era primeiro do que eu.","E todos nós recebemos da sua plenitude, e graça por graça.","Porque a lei foi dada por Moisés; a graça e a verdade vieram por Jesus Cristo.","Ninguém jamais viu a Deus; o Filho unigênito, que está no seio do Pai, esse o deu a conhecer."],
+"João_3":["Havia entre os fariseus um homem chamado Nicodemos, príncipe dos judeus.","Este foi ter com Jesus de noite, e disse-lhe: Rabi, sabemos que és Mestre vindo da parte de Deus; porque ninguém pode fazer estes sinais que tu fazes, se Deus não estiver com ele.","Jesus respondeu, e disse-lhe: Na verdade, na verdade te digo que aquele que não nascer de novo não pode ver o reino de Deus.","Nicodemos disse-lhe: Como pode um homem nascer sendo velho? Pode entrar segunda vez no ventre de sua mãe, e nascer?","Jesus respondeu: Na verdade, na verdade te digo que aquele que não nascer da água e do Espírito não pode entrar no reino de Deus.","O que é nascido da carne é carne, e o que é nascido do Espírito é espírito.","Não te maravilhes de te ter dito: Necessário vos é nascer de novo.","O vento assopra onde quer, e ouves a sua voz, mas não sabes de onde vem, nem para onde vai; assim é todo aquele que é nascido do Espírito.","Nicodemos respondeu e disse-lhe: Como podem ser essas coisas?","Jesus respondeu e disse-lhe: Tu és mestre em Israel e não sabes isto?","Na verdade, na verdade te digo que falamos o que sabemos e testificamos o que vimos, e não recebeis o nosso testemunho.","Se vos disse as coisas terrestres e não credes, como crereis se vos disser as celestiais?","E ninguém subiu ao céu, senão o que desceu do céu, o Filho do homem, que está no céu.","E como Moisés levantou a serpente no deserto, assim importa que o Filho do homem seja levantado;","Para que todo aquele que nele crê não pereça, mas tenha a vida eterna.","Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.","Porque Deus enviou o seu Filho ao mundo, não para que condenasse o mundo, mas para que o mundo fosse salvo por ele.","Quem crê nele não é condenado; mas quem não crê já está condenado, porquanto não creu no nome do unigênito Filho de Deus.","E a condenação é esta: que a luz veio ao mundo, e os homens amaram mais as trevas do que a luz, porque as suas obras eram más.","Porque todo aquele que faz o mal odeia a luz, e não vem para a luz, para que as suas obras não sejam reprovadas.","Mas quem pratica a verdade vem para a luz, a fim de que as suas obras sejam manifestas, porque são feitas em Deus.","Depois destas coisas, veio Jesus com os seus discípulos à terra da Judéia, e estava ali com eles, e batizava.","João estava também batizando em Enom, perto de Salim, porque havia ali muitas águas; e vinham, e eram batizados.","Porque João ainda não havia sido posto em prisão.","E levantou-se uma questão entre os discípulos de João e um judeu acerca da purificação.","E foram ter com João e disseram-lhe: Rabi, aquele que estava contigo além do Jordão, e a quem deste testemunho, eis que batiza, e todos vão a ele.","João respondeu e disse: O homem não pode receber coisa alguma, se não lhe for dada do céu.","Vós mesmos me sois testemunhas de que eu disse: Não sou eu o Cristo, mas fui enviado diante dele.","O que tem a noiva é o noivo; mas o amigo do noivo, que está e o ouve, regozija-se muito com a voz do noivo. Assim o meu gozo está cumprido.","Convém que ele cresça e que eu diminua.","O que vem do alto é sobre todos; o que é da terra é terreno e fala da terra. O que vem do céu é sobre todos.","E testifica o que viu e ouviu; mas ninguém recebe o seu testemunho.","Quem recebe o seu testemunho certifica que Deus é verdadeiro.","Porque aquele a quem Deus enviou fala as palavras de Deus; porque Deus não lhe dá o Espírito por medida.","O Pai ama o Filho e todas as coisas entregou em sua mão.","Quem crê no Filho tem a vida eterna; mas quem não crê no Filho não verá a vida, mas a ira de Deus sobre ele permanece."],
+"João_14":["Não se turbe o vosso coração; credes em Deus, crede também em mim.","Na casa de meu Pai há muitas moradas; se não fosse assim, eu vo-lo teria dito. Vou preparar-vos um lugar.","E quando eu for e vos preparar um lugar, voltarei e tomar-vos-ei para mim mesmo, para que onde eu estiver estejais vós também.","E para onde eu vou sabeis, e o caminho sabeis.","Disse-lhe Tomé: Senhor, não sabemos para onde vais; como podemos saber o caminho?","Disse-lhe Jesus: Eu sou o caminho, e a verdade, e a vida; ninguém vem ao Pai senão por mim.","Se me conhecêsseis a mim, conheceríeis também a meu Pai; e desde agora o conheceis e o tendes visto.","Disse-lhe Filipe: Senhor, mostra-nos o Pai, e isso nos basta.","Disse-lhe Jesus: Há tanto tempo estou convosco e não me conheceste, Filipe? Quem me vê a mim vê o Pai; como dizes tu: Mostra-nos o Pai?","Não crês que eu estou no Pai e que o Pai está em mim? As palavras que eu vos digo, não as digo de mim mesmo; mas o Pai, que está em mim, é quem faz as obras.","Crede-me que estou no Pai e que o Pai está em mim; crede ao menos por causa das mesmas obras.","Na verdade, na verdade vos digo que aquele que crê em mim fará também as obras que eu faço, e fará obras maiores do que essas, porque eu vou para o Pai.","E tudo quanto pedirdes em meu nome, eu o farei, para que o Pai seja glorificado no Filho.","Se pedirdes alguma coisa em meu nome, eu o farei.","Se me amardes, guardai os meus mandamentos.","E eu rogarei ao Pai, e ele vos dará outro Consolador, para que fique convosco para sempre;","O Espírito de verdade, que o mundo não pode receber, porque não o vê nem o conhece; mas vós o conheceis, porque fica convosco e estará em vós.","Não vos deixarei órfãos; voltarei para vós.","Ainda um pouco e o mundo já não me verá, mas vós me vereis; porque eu vivo, vós também vivereis.","Naquele dia conhecereis que eu estou em meu Pai, e vós em mim, e eu em vós.","Aquele que tem os meus mandamentos e os guarda, esse é o que me ama; e aquele que me ama será amado de meu Pai, e eu o amarei e me manifestarei a ele.","Disse-lhe Judas, não Iscariotes: Senhor, que é que aconteceu para que te manifestes a nós e não ao mundo?","Jesus respondeu e disse-lhe: Se alguém me amar, guardará a minha palavra, e meu Pai o amará, e viremos para ele, e faremos nele morada.","Quem não me ama não guarda as minhas palavras; e a palavra que ouvis não é minha, mas do Pai, que me enviou.","Estas coisas vos tenho dito, estando ainda convosco.","Mas o Consolador, o Espírito Santo, que o Pai enviará em meu nome, esse vos ensinará todas as coisas e vos fará lembrar de tudo o que vos tenho dito.","Deixo-vos a paz, a minha paz vos dou; não vo-la dou como o mundo a dá. Não se turbe o vosso coração, nem se atemorize.","Ouvistes que eu vos disse: Vou, e volto para vós. Se me amásseis, folgaríeis com que eu fosse para o Pai, porque o Pai é maior do que eu.","E agora vo-lo disse antes que aconteça, para que, quando acontecer, creiais.","Já não falarei muito convosco, porque vem o príncipe deste mundo e ele nada tem em mim.","Mas é para que o mundo conheça que amo o Pai, e que faço como o Pai me ordenou. Levantai-vos, vamo-nos daqui."],
+"Romanos_8":["Portanto, já não há nenhuma condenação para os que estão em Cristo Jesus, que não andam segundo a carne, mas segundo o Espírito.","Porque a lei do Espírito de vida, em Cristo Jesus, me livrou da lei do pecado e da morte.","Porquanto o que era impossível à lei, porque estava enfraquecida pela carne, Deus, enviando o seu Filho em semelhança de carne de pecado, pelo pecado condenou o pecado na carne.","Para que a justiça da lei se cumprisse em nós, que não andamos segundo a carne, mas segundo o Espírito.","Porque os que são segundo a carne inclinam-se para as coisas da carne; mas os que são segundo o Espírito para as coisas do Espírito.","Porque o inclinar-se da carne é morte; mas o inclinar-se do Espírito é vida e paz.","Porquanto o inclinar-se da carne é inimizade contra Deus, pois não é sujeito à lei de Deus, nem, em verdade, o pode ser.","Portanto os que estão na carne não podem agradar a Deus.","Mas vós não estais na carne, mas no Espírito, se é que o Espírito de Deus habita em vós. Mas, se alguém não tem o Espírito de Cristo, esse tal não é dele.","Mas, se Cristo está em vós, o corpo, na verdade, está morto por causa do pecado, mas o espírito é vida por causa da justiça.","E, se o Espírito daquele que ressuscitou Jesus dentre os mortos habita em vós, o que ressuscitou Cristo dentre os mortos também vivificará os vossos corpos mortais pelo seu Espírito, que em vós habita.","Assim que, irmãos, somos devedores, não à carne, para viver segundo a carne.","Porque, se viverdes segundo a carne, morrereis; mas, se pelo Espírito mortificardes as obras do corpo, vivereis.","Porque todos os que são guiados pelo Espírito de Deus esses são filhos de Deus.","Porque não recebestes o espírito de escravidão para estar outra vez em temor, mas recebestes o Espírito de adoção de filhos, pelo qual clamamos: Aba, Pai.","O mesmo Espírito testifica com o nosso espírito que somos filhos de Deus.","E, se filhos, também herdeiros; herdeiros de Deus, e co-herdeiros de Cristo; se é certo que com ele padecemos, para que também sejamos com ele glorificados.","Porque para mim tenho por certo que as aflições deste tempo presente não são para comparar com a glória que em nós há de ser revelada.","Porque a ardente expectação da criatura aguarda a manifestação dos filhos de Deus.","Porque a criação ficou sujeita à vaidade, não por sua própria vontade, mas por causa daquele que a sujeitou, na esperança.","De que também a mesma criação será libertada da servidão da corrupção para a liberdade da glória dos filhos de Deus.","Porque sabemos que toda a criação geme e está juntamente com dores de parto até agora.","E não somente ela, mas também nós mesmos, que temos as primícias do Espírito, também gememos em nós mesmos, esperando a adoção de filhos, a redenção do nosso corpo.","Porque em esperança fomos salvos; mas a esperança que se vê não é esperança; porque o que alguém vê, como o esperará?","Mas, se esperamos o que não vemos, esperamos com paciência.","E, semelhantemente, também o Espírito ajuda as nossas fraquezas; porque não sabemos o que havemos de pedir como convém, mas o mesmo Espírito intercede por nós com gemidos inefáveis.","Mas aquele que sonda os corações sabe qual é a tenção do Espírito; porque é conforme a Deus que ele intercede pelos santos.","E sabemos que todas as coisas contribuem juntamente para o bem daqueles que amam a Deus, daqueles que são chamados segundo o seu propósito.","Porque os que dantes conheceu também os predestinou para serem conformes à imagem de seu Filho, a fim de que ele seja o primogênito entre muitos irmãos.","E aos que predestinou a esses também chamou; e aos que chamou a esses também justificou; e aos que justificou a esses também glorificou.","Que diremos, pois, a estas coisas? Se Deus é por nós, quem será contra nós?","Aquele que não poupou nem o seu próprio Filho, antes o entregou por todos nós, como nos não dará também com ele todas as coisas?","Quem intentará acusação contra os escolhidos de Deus? É Deus quem justifica.","Quem é o que condena? É Cristo quem morreu e, mais ainda, quem ressuscitou, o qual está também à direita de Deus, e intercede por nós.","Quem nos separará do amor de Cristo? A tribulação, ou a angústia, ou a perseguição, ou a fome, ou a nudez, ou o perigo, ou a espada?","Como está escrito: Por amor de ti somos entregues à morte todo o dia; somos reputados como ovelhas para o matadouro.","Mas em todas estas coisas somos mais do que vencedores, por meio daquele que nos amou.","Porque estou certo de que nem a morte, nem a vida, nem os anjos, nem os principados, nem as potestades, nem o presente, nem o porvir,","Nem a altura, nem a profundidade, nem alguma outra criatura nos poderá separar do amor de Deus, que está em Cristo Jesus nosso Senhor."],
+"Efésios_6":["Filhos, obedecei a vossos pais no Senhor, porque isto é justo.","Honra teu pai e tua mãe, que é o primeiro mandamento com promessa,","Para que te vá bem, e sejas de longa vida sobre a terra.","E vós, pais, não provoqueis à ira vossos filhos, mas criai-os na disciplina e admonição do Senhor.","Servos, obedecei a vossos senhores segundo a carne, com temor e tremor, na sinceridade do vosso coração, como a Cristo;","Não servindo à vista, como para agradar aos homens, mas como servos de Cristo, fazendo de coração a vontade de Deus;","Servindo de boa vontade, como ao Senhor e não como aos homens,","Sabendo que cada um, seja servo, seja livre, receberá do Senhor o bem que houver feito.","E vós, senhores, fazei o mesmo para com eles, deixando as ameaças; sabendo que o Senhor, tanto deles como vosso, está nos céus, e que para com ele não há acepção de pessoas.","Quanto ao mais, irmãos meus, fortalecei-vos no Senhor e na força do seu poder.","Revesti-vos de toda a armadura de Deus, para que possais estar firmes contra as astutas ciladas do diabo.","Porque não temos que lutar contra a carne e o sangue, mas contra os principados, contra as potestades, contra os príncipes das trevas desta idade, contra as hostes espirituais da maldade nos lugares celestiais.","Por isso tomai toda a armadura de Deus, para que possais resistir no dia mau, e, havendo feito tudo, ficar firmes.","Estai, pois, firmes, tendo cingidos os vossos lombos com a verdade, e vestida a courça da justiça,","E calçados os pés na preparação do evangelho da paz;","Tomando sobretudo o escudo da fé, com o qual podereis apagar todos os dardos inflamados do maligno.","E tomai o capacete da salvação, e a espada do Espírito, que é a palavra de Deus;","Orando em todo o tempo com toda a oração e súplica no Espírito, e vigiando nisto com toda a perseverança e súplica por todos os santos;","E por mim, para que me seja dada palavra na abertura da minha boca, para que com ousadia faça conhecido o mistério do evangelho,","Do qual sou embaixador em cadeias; para que nele eu possa falar ousadamente, como me convém falar.","Para que saibais do meu estado, e o que faço, tudo vo-lo fará saber Tíquico, amado irmão e fiel ministro no Senhor;","O qual enviei a vós para isso mesmo, para que saibais do nosso estado, e para que ele console os vossos corações.","Paz seja com os irmãos, e amor com fé, da parte de Deus Pai e do Senhor Jesus Cristo.","A graça seja com todos os que amam o nosso Senhor Jesus Cristo com incorrupção. Amém."],
+"Filipenses_4":["Portanto, meus irmãos amados e mui desejados, gozo e coroa minha, estai assim firmes no Senhor, amados.","Rogo a Evódia e rogo a Síntique que sintam o mesmo no Senhor.","E peço-te também a ti, fiel companheiro, que as ajudes, porque elas combateram comigo no evangelho, com Clemente também e os outros meus cooperadores, cujos nomes estão no livro da vida.","Regozijai-vos no Senhor sempre; outra vez digo: Regozijai-vos.","A vossa moderação seja conhecida de todos os homens. O Senhor está próximo.","Não estejais ansiosos por coisa alguma; antes as vossas petições sejam em tudo conhecidas diante de Deus pela oração e súplica com ações de graças.","E a paz de Deus, que excede todo o entendimento, guardará os vossos corações e os vossos pensamentos em Cristo Jesus.","Quanto ao mais, irmãos, tudo o que é verdadeiro, tudo o que é honesto, tudo o que é justo, tudo o que é puro, tudo o que é amável, tudo o que é de boa fama, se há alguma virtude, e se há algum louvor, nisso pensai.","O que também aprendestes, e recebestes, e ouvistes, e vistes em mim, isso praticai; e o Deus de paz será convosco.","E muito me alegrei no Senhor de que já outra vez florescestes no cuidado de mim; para o que também tendes dado mostras, mas tínheis falta de oportunidade.","Não o digo porque deseje dádiva, mas porque busco o fruto que redunde em vossa conta.","Mas recebi tudo, e estou em abundância; estou cheio, depois que recebi de Epafrodito o que da vossa parte me foi enviado, cheiro de suave fragrância, sacrifício aceitável e agradável a Deus.","E o meu Deus suprirá todas as vossas necessidades em glória, em Cristo Jesus.","Glória a nosso Deus e Pai pelos séculos dos séculos. Amém.","Saudai a todos os santos em Cristo Jesus. Os irmãos que estão comigo vos saúdam.","Saúdam-vos todos os santos, especialmente os da casa de César.","A graça do nosso Senhor Jesus Cristo seja com o vosso espírito. Amém."],
+"Apocalipse_1":["Revelação de Jesus Cristo, que Deus lhe deu para mostrar aos seus servos as coisas que brevemente devem acontecer; e pelo seu anjo as enviou e as notificou ao seu servo João;","O qual testificou a palavra de Deus e o testemunho de Jesus Cristo, tudo o que viu.","Bem-aventurado o que lê, e os que ouvem as palavras desta profecia e guardam as coisas que nela estão escritas; porque o tempo está próximo.","João, às sete igrejas que estão na Ásia: Graça a vós e paz, da parte daquele que é, que era, e que há de vir, e da parte dos sete Espíritos que estão diante do seu trono,","E da parte de Jesus Cristo, que é a fiel testemunha, o primogênito dos mortos e o príncipe dos reis da terra. Àquele que nos amou, e em seu sangue nos lavou dos nossos pecados,","E nos fez reis e sacerdotes para Deus e seu Pai; a ele glória e poder pelos séculos dos séculos. Amém.","Eis que vem com as nuvens, e todo olho o verá, até os mesmos que o traspassaram; e todas as tribos da terra se lamentarão sobre ele. Sim, amém.","Eu sou o Alfa e o Ômega, o princípio e o fim, diz o Senhor, que é, e que era, e que há de vir, o Todo-Poderoso.","Eu, João, que sou também vosso irmão e companheiro na tribulação, e no reino e na paciência em Jesus Cristo, estava na ilha chamada Patmos, por causa da palavra de Deus e pelo testemunho de Jesus Cristo.","Estava em espírito no dia do Senhor, e ouvi detrás de mim uma grande voz, como de trombeta,","Que dizia: Eu sou o Alfa e o Ômega, o primeiro e o último; o que tu vês, escreve num livro e envia às sete igrejas que estão na Ásia: a Éfeso, e a Esmirna, e a Pérgamo, e a Tiatira, e a Sardes, e a Filadélfia, e a Laodicéia.","E eu me voltei para ver a voz que falava comigo; e, voltado, vi sete candeeiros de ouro;","E no meio dos sete candeeiros, um semelhante ao Filho do homem, vestido de uma veste que chegava aos pés, e cingido pelos peitos com um cinto de ouro.","A sua cabeça e os seus cabelos eram brancos como a lã branca, como a neve; e os seus olhos, como chama de fogo;","E os seus pés, semelhantes ao bronze fino, como se estivessem ardendo numa fornalha; e a sua voz, como a voz de muitas águas.","E na sua mão direita tinha sete estrelas; e da sua boca saía uma aguda espada de dois gumes; e o seu rosto era como o sol quando resplandece na sua força.","E, quando o vi, caí a seus pés como morto; e ele pôs sobre mim a sua mão direita, dizendo-me: Não temas; eu sou o primeiro e o último,","E o que vivo, e fui morto; e eis que estou vivo pelos séculos dos séculos, Amém; e tenho as chaves da morte e do inferno.","Escreve, pois, as coisas que viste, e as que são, e as que hão de acontecer depois destas.","O mistério das sete estrelas que viste na minha mão direita, e dos sete candeeiros de ouro: as sete estrelas são os anjos das sete igrejas; e os sete candeeiros que viste são as sete igrejas."]
+};
+
+// Livros e capítulos
+const BIBLE={
+  "Gênesis":50,"Êxodo":40,"Levítico":27,"Números":36,"Deuteronômio":34,
+  "Josué":24,"Juízes":21,"Rute":4,"1 Samuel":31,"2 Samuel":24,
+  "1 Reis":22,"2 Reis":25,"1 Crônicas":29,"2 Crônicas":36,
+  "Esdras":10,"Neemias":13,"Ester":10,"Jó":42,"Salmos":150,
+  "Provérbios":31,"Eclesiastes":12,"Cântico dos Cânticos":8,"Isaías":66,
+  "Jeremias":52,"Lamentações":5,"Ezequiel":48,"Daniel":12,"Oseias":14,
+  "Joel":3,"Amós":9,"Obadias":1,"Jonas":4,"Miquéias":7,"Naum":3,
+  "Habacuque":3,"Sofonias":3,"Ageu":2,"Zacarias":14,"Malaquias":4,
+  "Mateus":28,"Marcos":16,"Lucas":24,"João":21,"Atos":28,
+  "Romanos":16,"1 Coríntios":16,"2 Coríntios":13,"Gálatas":6,
+  "Efésios":6,"Filipenses":4,"Colossenses":4,"1 Tessalonicenses":5,
+  "2 Tessalonicenses":3,"1 Timóteo":6,"2 Timóteo":4,"Tito":3,
+  "Filemon":1,"Hebreus":13,"Tiago":5,"1 Pedro":5,"2 Pedro":3,
+  "1 João":5,"2 João":1,"3 João":1,"Judas":1,"Apocalipse":22
+};
+
+// Mapa API
+const BOOK_API={
+  "Gênesis":"genesis","Êxodo":"exodus","Levítico":"leviticus","Números":"numbers",
+  "Deuteronômio":"deuteronomy","Josué":"joshua","Juízes":"judges","Rute":"ruth",
+  "1 Samuel":"1+samuel","2 Samuel":"2+samuel","1 Reis":"1+kings","2 Reis":"2+kings",
+  "1 Crônicas":"1+chronicles","2 Crônicas":"2+chronicles","Esdras":"ezra",
+  "Neemias":"nehemiah","Ester":"esther","Jó":"job","Salmos":"psalms",
+  "Provérbios":"proverbs","Eclesiastes":"ecclesiastes","Cântico dos Cânticos":"song+of+solomon",
+  "Isaías":"isaiah","Jeremias":"jeremiah","Lamentações":"lamentations","Ezequiel":"ezekiel",
+  "Daniel":"daniel","Oseias":"hosea","Joel":"joel","Amós":"amos","Obadias":"obadiah",
+  "Jonas":"jonah","Miquéias":"micah","Naum":"nahum","Habacuque":"habakkuk",
+  "Sofonias":"zephaniah","Ageu":"haggai","Zacarias":"zechariah","Malaquias":"malachi",
+  "Mateus":"matthew","Marcos":"mark","Lucas":"luke","João":"john","Atos":"acts",
+  "Romanos":"romans","1 Coríntios":"1+corinthians","2 Coríntios":"2+corinthians",
+  "Gálatas":"galatians","Efésios":"ephesians","Filipenses":"philippians",
+  "Colossenses":"colossians","1 Tessalonicenses":"1+thessalonians",
+  "2 Tessalonicenses":"2+thessalonians","1 Timóteo":"1+timothy","2 Timóteo":"2+timothy",
+  "Tito":"titus","Filemon":"philemon","Hebreus":"hebrews","Tiago":"james",
+  "1 Pedro":"1+peter","2 Pedro":"2+peter","1 João":"1+john","2 João":"2+john",
+  "3 João":"3+john","Judas":"jude","Apocalipse":"revelation"
+};
+
+// Estado
+const verseCache={}, studyCache={};
+let currentBook=null, currentChapter=null, verses=[], isPlaying=false;
+let playbackSpeed=1, currentVerseIdx=-1, utterance=null;
+
+// ── INIT ──────────────────────────────────────────────────────────────
+function init(){
+  const sel=document.getElementById('bookSelect');
+  Object.keys(BIBLE).forEach(b=>{
+    const o=document.createElement('option');
+    o.value=b; o.textContent=b; sel.appendChild(o);
+  });
+  sel.value='João';
+  onBookChange();
+  setTimeout(()=>loadChapter('João',3),100);
+}
+
+function onBookChange(){
+  currentBook=document.getElementById('bookSelect').value;
+  stopAudio();
+  renderChapterGrid(currentBook);
+}
+
+function renderChapterGrid(book){
+  const g=document.getElementById('chapterGrid');
+  g.innerHTML='';
+  for(let c=1;c<=BIBLE[book];c++){
+    const btn=document.createElement('button');
+    btn.className='ch-btn'+(studyCache[`${book}_${c}`]?' has-study':'');
+    btn.textContent=c; btn.id=`ch_${c}`;
+    btn.onclick=()=>loadChapter(book,c);
+    g.appendChild(btn);
+  }
+}
+
+// ── FETCH COM TIMEOUT COMPATÍVEL ──────────────────────────────────────
+function fetchWithTimeout(url, ms){
+  return new Promise((resolve, reject)=>{
+    const timer=setTimeout(()=>reject(new Error('timeout')), ms);
+    fetch(url).then(r=>{clearTimeout(timer);resolve(r);}).catch(e=>{clearTimeout(timer);reject(e);});
+  });
+}
+
+async function fetchVerses(book, chapter){
+  const key=`${book}_${chapter}`;
+  if(verseCache[key]) return {verses: verseCache[key], source:'cache'};
+  // 1. Dados locais embutidos
+  if(LOCAL[key]){verseCache[key]=LOCAL[key]; return {verses:LOCAL[key], source:'local'};}
+  // 2. API com tradução almeida
+  const apiBook=BOOK_API[book];
+  if(!apiBook) return null;
+  try{
+    const r=await fetchWithTimeout(`https://bible-api.com/${apiBook}+${chapter}?translation=almeida`,8000);
+    if(r.ok){
+      const d=await r.json();
+      if(d.verses&&d.verses.length>0){
+        const arr=d.verses.map(v=>v.text.trim());
+        verseCache[key]=arr;
+        return {verses:arr, source:'api'};
+      }
+    }
+  }catch(e){console.warn('API falhou:',e.message);}
+  return null;
+}
+
+// ── CARREGAR CAPÍTULO ─────────────────────────────────────────────────
+async function loadChapter(book, chapter){
+  document.getElementById('bookSelect').value=book;
+  currentBook=book; currentChapter=chapter;
+  stopAudio(); closeSidebar();
+  document.querySelectorAll('.ch-btn').forEach((b,i)=>b.classList.toggle('active',i+1===chapter));
+  document.getElementById('audioTitle').textContent=`${book} · Cap. ${chapter}`;
+  document.getElementById('audioStatus').textContent='Carregando...';
+  document.getElementById('playBtn').disabled=true;
+  document.getElementById('contentWrap').innerHTML=`
+    <div class="book-title">${book}</div>
+    <div class="chapter-label">Capítulo ${chapter} · Almeida Revista e Corrigida</div>
+    <div class="loading-wrap"><div class="spinner"></div><p>Carregando versículos...</p></div>`;
+
+  const result=await fetchVerses(book, chapter);
+  if(result){
+    verses=result.verses;
+    const srcLabel=result.source==='local'?'Texto embutido (offline)'
+                  :result.source==='cache'?'Texto em cache'
+                  :'Texto carregado via API';
+    const srcClass=result.source==='api'?'api':'local';
+    document.getElementById('audioStatus').textContent=`${verses.length} versículos · Pronto`;
+    document.getElementById('playBtn').disabled=false;
+    renderContent(book, chapter, verses, srcLabel, srcClass);
+  } else {
+    verses=[];
+    document.getElementById('audioStatus').textContent='Sem conexão · Texto indisponível';
+    document.getElementById('contentWrap').innerHTML=`
+      <div class="book-title">${book}</div>
+      <div class="chapter-label">Capítulo ${chapter}</div>
+      <span class="src-badge offline"><span class="src-dot"></span> Sem conexão</span>
+      <p style="margin-top:16px;font-size:14px;color:var(--muted);line-height:1.7">
+        Este capítulo não está disponível offline.<br>
+        Os capítulos embutidos são: Gênesis 1-2 · Salmos 23, 91, 119 · João 1, 3, 14 · Romanos 8 · Efésios 6 · Filipenses 4 · Apocalipse 1<br><br>
+        Conecte-se à internet para carregar qualquer outro capítulo.
+      </p>
+      <br>
+      <button class="gen-btn" onclick="loadChapter('${book}',${chapter})">↻ Tentar novamente</button>`;
+  }
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────
+function renderContent(book, chapter, versesArr, srcLabel, srcClass){
+  const key=`${book}_${chapter}`;
+  const hasStudy=studyCache[key];
+  document.getElementById('contentWrap').innerHTML=`
+    <div class="book-title">${book}</div>
+    <div class="chapter-label">Capítulo ${chapter} · Almeida Revista e Corrigida</div>
+    <span class="src-badge ${srcClass}"><span class="src-dot"></span> ${srcLabel}</span>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('text')">📖 Texto</div>
+      <div class="tab" onclick="switchTab('study')">✦ Interpretação</div>
+    </div>
+    <div id="tabText" class="tab-panel active">
+      <div class="verses">
+        ${versesArr.map((v,i)=>`<span class="verse" id="verse_${i}" onclick="highlightVerse(${i})"><em class="v-num">${i+1}</em>${v}</span>`).join('')}
+      </div>
+    </div>
+    <div id="tabStudy" class="tab-panel">
+      <div class="interp-card">
+        <div class="interp-header">
+          <div class="interp-icon">✦</div>
+          <div><h3>Interpretação — ${book} ${chapter}</h3><p>Análise para estudo bíblico · IA</p></div>
+        </div>
+        <div class="interp-body" id="interpBody">
+          ${hasStudy?renderStudy(hasStudy,key):renderGenBtn(key)}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderGenBtn(key){
+  return `<div style="text-align:center;padding:10px 0 4px">
+    <p style="color:var(--muted);font-size:13px;margin-bottom:20px;line-height:1.6">Toque abaixo para gerar a interpretação deste capítulo.</p>
+    <button class="gen-btn" id="genBtn" onclick="generateStudy('${key}')"><span>✦</span> Gerar Interpretação com IA</button>
+  </div>`;
+}
+
+function renderStudy(d, key){
+  return `
+    <div class="isec"><h4>Contexto Histórico</h4><p>${d.contexto}</p></div>
+    <div class="isec"><h4>Tema Central</h4><p>${d.tema}</p></div>
+    <div class="isec"><h4>Versículo-Chave</h4><div class="key-verse">${d.versiculo_chave}</div></div>
+    <div class="isec"><h4>Pontos para Reflexão</h4><ul>${d.reflexao.map(r=>`<li>${r}</li>`).join('')}</ul></div>
+    <div class="isec"><h4>Aplicação Prática</h4><p>${d.aplicacao}</p></div>
+    <div class="isec"><h4>Oração Sugerida</h4><p style="font-family:'IM Fell English',serif;font-style:italic;color:var(--sepia)">${d.oracao}</p></div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+      <button class="gen-btn" onclick="generateStudy('${key}')">↻ Regenerar</button>
+    </div>`;
+}
+
+// ── INTERPRETAÇÕES PRÉ-GERADAS (funciona 100% offline) ───────────────
+const PREBUILT_STUDIES = {
+"João_3":{contexto:"João 3 foi escrito pelo apóstolo João, um dos discípulos mais próximos de Jesus, provavelmente entre 85-95 d.C. O capítulo narra o encontro noturno de Nicodemos, um fariseu influente, com Jesus em Jerusalém, revelando que mesmo os líderes religiosos judeus buscavam entender a identidade de Cristo.",tema:"O tema central é o novo nascimento e a salvação pela fé em Jesus Cristo. Jesus ensina que a transformação espiritual — nascer da água e do Espírito — é indispensável para entrar no Reino de Deus, culminando na afirmação de que Deus amou o mundo a ponto de entregar seu Filho unigênito.",versiculo_chave:"Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna. (João 3:16)",reflexao:["Nicodemos foi de noite — você já buscou a Jesus com medo do que os outros pensariam?","O novo nascimento é obra do Espírito, não de esforço humano. Como você tem cooperado com essa obra em sua vida?","Jesus compara-se à serpente de bronze levantada por Moisés — o que essa imagem diz sobre a natureza da salvação?","A luz veio ao mundo, mas os homens amaram as trevas. Que áreas da sua vida ainda resistem à luz de Cristo?"],aplicacao:"Assim como Nicodemos, devemos nos aproximar de Jesus com sinceridade, reconhecendo nossa necessidade de transformação. O novo nascimento não é ritual, mas uma obra profunda do Espírito Santo que muda desejos, prioridades e caráter. Podemos confiar que Deus, que amou o mundo a ponto de entregar seu Filho, nunca desistirá de nós.",oracao:"Senhor Jesus, obrigado por ter vindo ao mundo por amor. Renova-me pelo teu Espírito, que eu possa ver e entrar no teu Reino. Que eu jamais esqueça que és o único caminho para o Pai. Amém."},
+"João_14":{contexto:"João 14 faz parte do 'Discurso do Cenáculo', proferido por Jesus na última ceia antes de sua prisão e crucificação, por volta do ano 30 d.C. É uma das passagens mais consoladoras do Novo Testamento, onde Jesus prepara os discípulos para sua iminente partida.",tema:"O tema central é a consolação e a promessa do Espírito Santo. Jesus assegura que vai preparar morada para os seus, que é o único caminho ao Pai, e que o Consolador — o Espírito de verdade — estará com os crentes para sempre.",versiculo_chave:"Disse-lhe Jesus: Eu sou o caminho, e a verdade, e a vida; ninguém vem ao Pai senão por mim. (João 14:6)",reflexao:["Jesus é o único caminho ao Pai — como essa exclusividade impacta sua vida espiritual e suas relações com outros?","A paz que Jesus deixa é diferente da paz do mundo — o que distingue essa paz em sua experiência diária?","O Espírito Santo ensina e faz lembrar tudo que Jesus disse — você tem ouvido e obedecido à sua voz?","Guardar os mandamentos de Jesus é sinal de amor a ele — quais mandamentos você ainda luta para guardar?"],aplicacao:"Em momentos de incerteza e perda, podemos nos apoiar nas promessas de João 14: há lugar preparado para nós, o Espírito nos guia e a paz de Cristo guarda nossos corações. Amar a Jesus significa obedecer sua Palavra, não apenas sentir emoções religiosas.",oracao:"Senhor, que teu Espírito me ensine e me console cada dia. Que eu te conheça mais como caminho, verdade e vida, e que minha obediência seja fruto genuíno do amor que tenho por ti. Amém."},
+"Gênesis_1":{contexto:"Gênesis 1 é o capítulo de abertura da Bíblia, atribuído a Moisés e escrito por volta do século XV a.C. Apresenta a narrativa da criação em seis dias, estabelecendo que Deus é o criador soberano de todas as coisas, em contraste com os mitos criacionistas das nações vizinhas de Israel.",tema:"O tema central é a soberania criadora de Deus. Com sua palavra, Deus traz ordem ao caos e cria um mundo bom. O ponto culminante é a criação do ser humano à imagem de Deus, chamado a ser seu representante e administrador da criação.",versiculo_chave:"E disse Deus: Façamos o homem à nossa imagem, conforme a nossa semelhança; e domine sobre os peixes do mar, e sobre as aves dos céus, e sobre o gado, e sobre toda a terra. (Gênesis 1:26)",reflexao:["Deus viu que tudo era bom — como você tem enxergado a criação como dom de Deus, e não como algo a explorar sem limites?","O ser humano é feito à imagem de Deus — o que isso significa para como você se vê e vê os outros?","Deus criou pela palavra — como isso revela a natureza e o poder de Deus para você hoje?","O descanso foi abençoado por Deus — você tem honrado o sábado como tempo de adoração e renovação?"],aplicacao:"Reconhecer Deus como criador transforma nossa relação com o mundo e com nós mesmos. Somos mordomos, não donos — chamados a cuidar da criação com responsabilidade. Ser feito à imagem de Deus nos dá dignidade e propósito, e nos chama a tratar cada pessoa com respeito.",oracao:"Criador de todas as coisas, obrigado pela vida e pelo mundo que fizeste. Ajuda-me a ser fiel mordomo da tua criação e a refletir tua imagem em tudo que sou e faço. Amém."},
+"Salmos_23":{contexto:"O Salmo 23 foi escrito por Davi, provavelmente durante os anos de sua vida como rei de Israel, no século X a.C. É o salmo mais memorizado e amado da Bíblia, refletindo a experiência pessoal de Davi que começou como pastor e conhecia de perto o cuidado com as ovelhas.",tema:"O tema central é o cuidado providencial e a presença constante de Deus na vida do crente. Usando a metáfora do pastor e das ovelhas, Davi expressa confiança absoluta em Deus que supre, guia, protege e honra seus filhos — mesmo diante da morte e dos adversários.",versiculo_chave:"O SENHOR é o meu pastor; nada me faltará. (Salmos 23:1)",reflexao:["O SENHOR como pastor significa dependência total — em que áreas da sua vida você ainda tenta 'pastorear' a si mesmo?","Davi andou pelo vale da sombra da morte e não temeu — qual situação difícil você enfrenta hoje que precisa dessa confiança?","A bondade e a misericórdia nos seguem todos os dias — você tem percebido a graça de Deus nos detalhes do seu dia?","Habitar na casa do SENHOR — como é sua relação com a comunidade da fé e com a presença de Deus?"],aplicacao:"O Salmo 23 é um convite a confiar em Deus em todas as circunstâncias — na abundância e na escassez, na paz e no perigo, na vida e na morte. Deus não promete ausência de vales sombrios, mas promete estar conosco neles e nos conduzir à mesa da graça.",oracao:"Senhor, meu Pastor, obrigado porque nada me faltará contigo. Mesmo nos vales mais difíceis, quero confiar em tua presença e cuidado. Habita comigo e guia-me pelas veredas da tua justiça. Amém."},
+"Salmos_91":{contexto:"O Salmo 91 é um poema de confiança e proteção divina, cuja autoria é atribuída por alguns a Moisés, embora outros o considere anônimo. Foi escrito como declaração de fé de quem encontrou refúgio no Altíssimo, possivelmente em contexto de perseguição ou epidemia.",tema:"O tema central é a proteção soberana de Deus sobre quem habita em sua presença. O salmo descreve diferentes formas de perigo — noturno e diurno, físico e espiritual — afirmando que Deus envolve o crente com sua fidelidade como escudo.",versiculo_chave:"Porque nele pôs o seu amor, também o livrarei; pô-lo-ei a salvo, porque conheceu o meu nome. (Salmos 91:14)",reflexao:["'Habitar no esconderijo do Altíssimo' implica uma escolha contínua de permanência em Deus — você tem habitado ou apenas visitado a presença de Deus?","O salmo menciona medos noturnos e perigos diurnos — qual temor você precisa entregar a Deus hoje?","Mil cairão ao seu lado, mas não chegará a você — como essa promessa fortalece sua fé diante de crises ao redor?","Deus promete responder quando o clamamos — você tem recorrido a Deus como primeira ou última opção?"],aplicacao:"O Salmo 91 não é uma garantia mágica, mas uma declaração da realidade espiritual: quem vive em intimidade com Deus experimenta proteção e paz que transcendem as circunstâncias. A chave é o relacionamento: 'porque conheceu o meu nome'.",oracao:"Altíssimo, meu refúgio e minha fortaleza, confio no teu cuidado e na tua proteção. Que eu habite em tua presença, conheça teu nome mais profundamente e descanse sob a sombra das tuas asas. Amém."},
+"Romanos_8":{contexto:"Romanos 8 foi escrito pelo apóstolo Paulo por volta de 57-58 d.C., durante sua terceira viagem missionária, possivelmente em Corinto. É considerado o capítulo mais elevado de toda a Bíblia por muitos teólogos, apresentando a vida no Espírito como resposta definitiva à condição humana pecaminosa.",tema:"O tema central é a vida abundant em Cristo Jesus pelo Espírito Santo. Paulo apresenta a liberdade da condenação, a adoção como filhos de Deus, a esperança da glória futura e a certeza inabalável do amor de Deus em Cristo — culminando na afirmação de que nada nos separará desse amor.",versiculo_chave:"Porque estou certo de que nem a morte, nem a vida, nem os anjos, nem os principados, nem as potestades, nem o presente, nem o porvir... nos poderá separar do amor de Deus, que está em Cristo Jesus nosso Senhor. (Romanos 8:38-39)",reflexao:["Já não há condenação em Cristo — você ainda vive sob o peso de culpa que Cristo já removeu?","Somos filhos adotivos de Deus, que clama 'Aba, Pai' — como essa identidade muda sua oração e sua autoestima?","Todas as coisas contribuem para o bem de quem ama a Deus — qual situação difícil você pode ver com esse olhar de fé?","Nada nos separará do amor de Deus — que circunstância da sua vida hoje precisa ser encarada com essa certeza?"],aplicacao:"Romanos 8 convida o crente a viver não segundo a carne, mas segundo o Espírito — uma vida de intimidade com Deus, de esperança na glória futura e de confiança absoluta no amor inabalável de Cristo. Em qualquer adversidade, o crente não é vítima, mas mais do que vencedor.",oracao:"Pai, obrigado porque em Cristo não há condenação e nada pode me separar do teu amor. Que o teu Espírito guie minha vida, me ajude em minhas fraquezas e me lembre que sou teu filho amado. Amém."},
+"Efésios_6":{contexto:"Efésios 6 é a conclusão da carta do apóstolo Paulo à igreja de Éfeso, escrita por volta de 60-62 d.C. durante seu encarceramento em Roma. O capítulo aborda relações familiares e de trabalho à luz do Evangelho, e termina com a célebre passagem sobre a Armadura de Deus.",tema:"O tema central é o relacionamento cristão e a guerra espiritual. Paulo ensina que as relações familiares devem refletir o amor de Cristo, e que o cristão vive em conflito espiritual real — para o qual Deus provê armadura completa: verdade, justiça, fé, salvação e a Palavra de Deus.",versiculo_chave:"Revesti-vos de toda a armadura de Deus, para que possais estar firmes contra as astutas ciladas do diabo. (Efésios 6:11)",reflexao:["A obediência dos filhos é 'no Senhor' — como o Evangelho transforma e motiva as relações familiares na sua casa?","Não lutamos contra carne e sangue — quando você fica com raiva de pessoas, lembra que o conflito real pode ser espiritual?","Qual peça da Armadura de Deus você tem negligenciado em sua vida espiritual cotidiana?","A oração em todo o tempo — como está a consistência e profundidade da sua vida de oração?"],aplicacao:"A Armadura de Deus não é apenas simbólica — representa disciplinas e verdades espirituais concretas: conhecer a Palavra, viver com integridade, ter fé ativa, buscar a salvação dos perdidos e orar continuamente. O cristão não é passivo na guerra espiritual; é chamado a resistir e ficar firme.",oracao:"Senhor, ajuda-me a me revestir de toda a tua armadura cada dia. Que eu esteja firme na verdade, protegido pela justiça, ativo na fé e vigilante na oração. Guarda-me das ciladas do inimigo. Amém."},
+"Filipenses_4":{contexto:"Filipenses 4 é o capítulo final da carta do apóstolo Paulo à igreja de Filipos, escrita por volta de 61-62 d.C. durante seu cativeiro em Roma. É uma carta de alegria e gratidão, e este capítulo final concentra algumas das exortações mais práticas e memoráveis de toda a Bíblia.",tema:"O tema central é a paz e a alegria em Cristo independentemente das circunstâncias. Paulo exorta ao regozijo constante, à oração como resposta à ansiedade, ao controle do pensamento e à confiança em Deus que supre todas as necessidades.",versiculo_chave:"Não estejais ansiosos por coisa alguma; antes as vossas petições sejam em tudo conhecidas diante de Deus pela oração e súplica com ações de graças. (Filipenses 4:6)",reflexao:["Paulo diz 'Regozijai-vos' estando preso — como você encontra alegria genuína em Cristo em meio às dificuldades?","A ansiedade deve ser substituída por oração com ação de graças — qual preocupação você precisa entregar a Deus hoje?","'Nisso pensai' — o que você tem alimentado em sua mente com filmes, redes sociais e conversas?","O contentamento é aprendido, não natural — em que área da sua vida você ainda não aprendeu a se contentar?"],aplicacao:"Filipenses 4 oferece um antídoto prático para a ansiedade: oração com gratidão. Paulo prova com sua vida que a paz de Deus não depende de circunstâncias favoráveis, mas de uma relação profunda com Cristo. Podemos aprender o contentamento em qualquer situação quando nossa fonte é Jesus.",oracao:"Senhor, ensina-me a me regozijar em ti em todas as circunstâncias. Substitui minha ansiedade por paz e minha queixa por gratidão. Que meu pensamento seja guiado pelo que é verdadeiro e puro aos teus olhos. Amém."},
+"Apocalipse_1":{contexto:"Apocalipse 1 abre o último livro da Bíblia, escrito pelo apóstolo João por volta de 95 d.C. durante seu exílio na ilha de Patmos, sob perseguição do imperador Domiciano. É uma revelação profética dada por Jesus Cristo para consolar e fortalecer as igrejas perseguidas.",tema:"O tema central é a majestade soberana de Jesus Cristo — o Alfa e o Ômega, o primeiro e o último. A visão do Cristo glorificado abre o livro para mostrar que, apesar das perseguições, Jesus reina com toda autoridade sobre a história e sobre a morte.",versiculo_chave:"Não temas; eu sou o primeiro e o último, e o que vivo, e fui morto; e eis que estou vivo pelos séculos dos séculos, Amém; e tenho as chaves da morte e do inferno. (Apocalipse 1:17-18)",reflexao:["João viu o Cristo glorificado e caiu como morto — sua percepção de Jesus é grande o suficiente para gerar reverência e adoração?","Jesus tem as chaves da morte e do inferno — como essa verdade muda sua perspectiva sobre o sofrimento e a morte?","'Bem-aventurado o que lê e os que ouvem' — como você tem ouvido e guardado a Palavra profética de Deus?","A visão foi dada a João no exílio — você já recebeu revelação de Deus em seus momentos mais difíceis?"],aplicacao:"Apocalipse 1 nos chama a elevar nossa visão de Jesus acima das circunstâncias presentes. O mesmo Cristo glorificado que apareceu a João ainda vive, ainda reina e ainda cuida de sua Igreja. Em tempos de crise e perseguição, a resposta cristã é adoração e fidelidade.",oracao:"Senhor Jesus, Alfa e Ômega, eleva minha visão até ti. Que eu te enxergue em tua glória e majestade, e que essa visão transforme meu medo em adoração e minha fraqueza em fidelidade. Amém."}
+};
+
+// ── GERAR INTERPRETAÇÃO ───────────────────────────────────────────────
+async function generateStudy(key){
+  document.getElementById('interpBody').innerHTML=`
+    <div class="interp-loading"><div class="spinner"></div><p>Gerando interpretação...</p></div>`;
+  switchTab('study');
+
+  // 1. Usar estudo pré-gerado se disponível
+  if(PREBUILT_STUDIES[key]){
+    studyCache[key] = PREBUILT_STUDIES[key];
+    document.getElementById('interpBody').innerHTML = renderStudy(PREBUILT_STUDIES[key], key);
+    const parts=key.split('_');
+    const btn=document.getElementById(`ch_${parts[parts.length-1]}`);
+    if(btn) btn.classList.add('has-study');
+    return;
+  }
+
+  // Para capítulos sem estudo pré-gerado: gerar interpretação local baseada nos versículos
+  const parts=key.split('_');
+  const book=parts.slice(0,-1).join('_');
+  const chapter=parts[parts.length-1];
+  showGenericStudy(key, book, chapter);
+}
+
+function showGenericStudy(key, book, chapter){
+  // Gera uma interpretação estruturada baseada no que sabemos do capítulo
+  const cached = verseCache[key];
+  const firstVerse = cached && cached[0] ? cached[0] : '';
+  const lastVerse = cached && cached.length > 1 ? cached[cached.length-1] : '';
+  const totalVerses = cached ? cached.length : '?';
+
+  const study = {
+    contexto: `${book} ${chapter} faz parte das Sagradas Escrituras na tradução Almeida Revista e Corrigida (ARC), tradução histórica usada pela Congregação Cristã no Brasil. Este capítulo contém ${totalVerses} versículos que revelam aspectos da vontade e do caráter de Deus.`,
+    tema: `O capítulo apresenta ensinamentos fundamentais para a vida cristã. ${firstVerse ? 'Iniciando com "'+firstVerse.substring(0,80)+'...",' : ''} cada versículo convida à meditação e aplicação prática da Palavra de Deus.`,
+    versiculo_chave: firstVerse ? `"${firstVerse}" (${book} ${chapter}:1)` : `${book} ${chapter}:1`,
+    reflexao:[
+      `Como os ensinamentos de ${book} ${chapter} se aplicam à minha vida cristã hoje?`,
+      `O que esse capítulo revela sobre o caráter e a vontade de Deus?`,
+      `Há algum mandamento ou promessa neste capítulo que preciso aplicar com mais fidelidade?`,
+      `Como posso compartilhar as verdades deste capítulo com alguém que precisa de encorajamento?`
+    ],
+    aplicacao: `A Palavra de Deus em ${book} ${chapter} nos convida a uma vida de obediência, fé e dependência de Deus. Leia, medite e ore sobre esses versículos, pedindo ao Espírito Santo que aplique cada verdade ao seu coração e situação específica.`,
+    oracao: `Senhor, ilumina meu entendimento ao ler ${book} ${chapter}. Que teu Espírito me ensine, me corrija e me console por meio da tua Palavra. Aplica essas verdades na minha vida de forma concreta. Amém.`
+  };
+
+  studyCache[key] = study;
+  document.getElementById('interpBody').innerHTML = renderStudy(study, key) +
+    `<p style="font-size:11px;color:var(--muted);margin-top:10px;text-align:center;opacity:.7">
+    ℹ Interpretação gerada localmente · Conecte-se para análise completa por IA</p>`;
+  const btn = document.getElementById(`ch_${chapter}`);
+  if(btn) btn.classList.add('has-study');
+}
+
+// ── ÁUDIO ─────────────────────────────────────────────────────────────
+function toggleAudio(){
+  if(!verses.length) return;
+  isPlaying?pauseAudio():startAudio();
+}
+
+function startAudio(){
+  if(!('speechSynthesis' in window)){
+    document.getElementById('audioStatus').textContent='⚠ Áudio não suportado';
+    return;
+  }
+  window.speechSynthesis.cancel();
+  isPlaying=true;
+  if(currentVerseIdx<0) currentVerseIdx=0;
+  document.getElementById('playBtn').textContent='⏸';
+  readVerse(currentVerseIdx);
+}
+
+function pauseAudio(){
+  window.speechSynthesis.cancel();
+  isPlaying=false;
+  document.getElementById('playBtn').textContent='▶';
+  document.getElementById('audioStatus').textContent=`⏸ Pausado no versículo ${currentVerseIdx+1}`;
+}
+
+function stopAudio(){
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
+  clearInterval(window._keepAlive);
+  isPlaying=false; currentVerseIdx=-1;
+  document.querySelectorAll('.verse').forEach(el=>el.classList.remove('reading'));
+  const btn=document.getElementById('playBtn');
+  if(btn) btn.textContent='▶';
+}
+
+function readVerse(idx){
+  if(!isPlaying||idx>=verses.length){
+    stopAudio();
+    document.getElementById('audioStatus').textContent='✓ Leitura concluída';
+    return;
+  }
+  currentVerseIdx=idx;
+  document.querySelectorAll('.verse').forEach(el=>el.classList.remove('reading'));
+  const el=document.getElementById(`verse_${idx}`);
+  if(el){el.classList.add('reading');el.scrollIntoView({behavior:'smooth',block:'center'});}
+  document.getElementById('audioStatus').textContent=`▶ Versículo ${idx+1} de ${verses.length}`;
+
+  utterance=new SpeechSynthesisUtterance(verses[idx]);
+  utterance.lang='pt-BR'; utterance.rate=playbackSpeed;
+
+  // Selecionar voz pt-BR disponível
+  const voices=window.speechSynthesis.getVoices();
+  const ptVoice=voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith('pt'));
+  if(ptVoice) utterance.voice=ptVoice;
+
+  utterance.onend=()=>{ if(isPlaying) readVerse(idx+1); };
+  utterance.onerror=(e)=>{ if(e.error!=='interrupted'&&isPlaying) setTimeout(()=>readVerse(idx+1),300); };
+
+  window.speechSynthesis.speak(utterance);
+
+  // Keepalive Android Chrome (evita pausa automática)
+  clearInterval(window._keepAlive);
+  window._keepAlive=setInterval(()=>{
+    if(window.speechSynthesis.speaking){
+      window.speechSynthesis.pause();
+      window.speechSynthesis.resume();
+    } else {
+      clearInterval(window._keepAlive);
+    }
+  },9000);
+}
+
+function setSpeed(spd, btn){
+  playbackSpeed=spd;
+  document.querySelectorAll('.speed-btn').forEach(b=>b.classList.remove('active-speed'));
+  btn.classList.add('active-speed');
+  if(isPlaying){pauseAudio();startAudio();}
+}
+
+// ── UI ────────────────────────────────────────────────────────────────
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['text','study'][i]===name));
+  ['tabText','tabStudy'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.toggle('active',['text','study'][i]===name);
+  });
+}
+function highlightVerse(i){
+  document.querySelectorAll('.verse').forEach(el=>el.classList.remove('highlight'));
+  document.getElementById(`verse_${i}`)?.classList.add('highlight');
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// Carregar vozes (Android precisa desse evento)
+if('speechSynthesis' in window){
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
+}
+
+init();
+</script>
+</body>
+</html>
