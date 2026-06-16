@@ -19,8 +19,8 @@ header h1{font-family:'Cinzel',serif;color:var(--white);font-size:15px;font-weig
 header p{font-size:9px;color:var(--gold-lt);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
 .badge-arc{margin-left:auto;background:var(--gold);color:var(--ink);font-family:'Cinzel',serif;font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0}
 .menu-toggle{background:rgba(255,255,255,.08);border:none;border-radius:6px;color:var(--white);font-size:18px;cursor:pointer;width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.app{display:grid;grid-template-columns:250px 1fr;height:calc(100vh - 62px);overflow:hidden}
-aside{background:var(--parchment);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.app{display:grid;grid-template-columns:250px 1fr;height:calc(100vh - 130px);margin-top:130px;overflow:hidden}
+aside{background:var(--parchment);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;height:100%}
 .sidebar-header{padding:14px;border-bottom:1px solid var(--border)}
 .sidebar-header label{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px}
 select{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--white);font-family:'Inter',sans-serif;font-size:13px;color:var(--ink);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235C4A2A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
@@ -32,8 +32,8 @@ select{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:
 .ch-btn.active{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
 .ch-btn.has-study{border-color:var(--rust);border-width:2px}
 main{display:flex;flex-direction:column;overflow:hidden;height:100%}
-.content-area{flex:1;overflow-y:auto;padding:24px 16px;-webkit-overflow-scrolling:touch}
-.audio-bar{background:var(--ink);padding:12px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:90;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.content-area{flex:1;overflow-y:auto;padding:24px 16px 80px;-webkit-overflow-scrolling:touch}
+.audio-bar{background:var(--ink);padding:12px 16px;display:flex;align-items:center;gap:10px;position:fixed;top:62px;left:0;right:0;z-index:95;box-shadow:0 2px 8px rgba(0,0,0,.4)}
 .play-btn{width:42px;height:42px;border-radius:50%;border:2px solid var(--gold);background:transparent;color:var(--gold);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;-webkit-tap-highlight-color:transparent}
 .play-btn:active{background:var(--gold);color:var(--ink)}
 .play-btn:disabled{opacity:.4;cursor:not-allowed}
@@ -86,7 +86,7 @@ main{display:flex;flex-direction:column;overflow:hidden;height:100%}
 .overlay.show{display:block}
 @media(max-width:640px){
   .app{grid-template-columns:1fr}
-  aside{position:fixed;left:-100%;top:0;width:80vw;height:100vh;z-index:200;transition:left .25s;box-shadow:4px 0 20px var(--shadow)}
+  aside{position:fixed;left:-100%;top:0;width:80vw;height:100vh;z-index:200;transition:left .25s;box-shadow:4px 0 20px var(--shadow);padding-top:130px}
   aside.open{left:0}
   .content-area{padding:18px 14px}
   .audio-bar{padding:10px 12px;gap:8px}
@@ -106,6 +106,16 @@ main{display:flex;flex-direction:column;overflow:hidden;height:100%}
   <span class="badge-arc">ARC</span>
 </header>
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+<div class="audio-bar">
+  <button class="play-btn" id="playBtn" onclick="toggleAudio()" disabled>▶</button>
+  <div class="audio-info">
+    <div class="audio-title" id="audioTitle">Selecione um capítulo</div>
+    <div class="audio-status" id="audioStatus">Toque em um capítulo para começar</div>
+  </div>
+  <button class="speed-btn active-speed" onclick="setSpeed(1,this)">1×</button>
+  <button class="speed-btn" onclick="setSpeed(1.25,this)">1.25×</button>
+  <button class="speed-btn" onclick="setSpeed(1.5,this)">1.5×</button>
+</div>
 <div class="app">
   <aside id="sidebar">
     <div class="sidebar-header">
@@ -117,16 +127,6 @@ main{display:flex;flex-direction:column;overflow:hidden;height:100%}
     </div>
   </aside>
   <main>
-    <div class="audio-bar">
-      <button class="play-btn" id="playBtn" onclick="toggleAudio()" disabled>▶</button>
-      <div class="audio-info">
-        <div class="audio-title" id="audioTitle">Selecione um capítulo</div>
-        <div class="audio-status" id="audioStatus">Toque em um capítulo para começar</div>
-      </div>
-      <button class="speed-btn active-speed" onclick="setSpeed(1,this)">1×</button>
-      <button class="speed-btn" onclick="setSpeed(1.25,this)">1.25×</button>
-      <button class="speed-btn" onclick="setSpeed(1.5,this)">1.5×</button>
-    </div>
     <div class="content-area">
       <div id="contentWrap">
         <div class="empty-state">
@@ -176,27 +176,9 @@ const BIBLE={
   "1 João":5,"2 João":1,"3 João":1,"Judas":1,"Apocalipse":22
 };
 
-// Mapa API
-const BOOK_API={
-  "Gênesis":"genesis","Êxodo":"exodus","Levítico":"leviticus","Números":"numbers",
-  "Deuteronômio":"deuteronomy","Josué":"joshua","Juízes":"judges","Rute":"ruth",
-  "1 Samuel":"1+samuel","2 Samuel":"2+samuel","1 Reis":"1+kings","2 Reis":"2+kings",
-  "1 Crônicas":"1+chronicles","2 Crônicas":"2+chronicles","Esdras":"ezra",
-  "Neemias":"nehemiah","Ester":"esther","Jó":"job","Salmos":"psalms",
-  "Provérbios":"proverbs","Eclesiastes":"ecclesiastes","Cântico dos Cânticos":"song+of+solomon",
-  "Isaías":"isaiah","Jeremias":"jeremiah","Lamentações":"lamentations","Ezequiel":"ezekiel",
-  "Daniel":"daniel","Oseias":"hosea","Joel":"joel","Amós":"amos","Obadias":"obadiah",
-  "Jonas":"jonah","Miquéias":"micah","Naum":"nahum","Habacuque":"habakkuk",
-  "Sofonias":"zephaniah","Ageu":"haggai","Zacarias":"zechariah","Malaquias":"malachi",
-  "Mateus":"matthew","Marcos":"mark","Lucas":"luke","João":"john","Atos":"acts",
-  "Romanos":"romans","1 Coríntios":"1+corinthians","2 Coríntios":"2+corinthians",
-  "Gálatas":"galatians","Efésios":"ephesians","Filipenses":"philippians",
-  "Colossenses":"colossians","1 Tessalonicenses":"1+thessalonians",
-  "2 Tessalonicenses":"2+thessalonians","1 Timóteo":"1+timothy","2 Timóteo":"2+timothy",
-  "Tito":"titus","Filemon":"philemon","Hebreus":"hebrews","Tiago":"james",
-  "1 Pedro":"1+peter","2 Pedro":"2+peter","1 João":"1+john","2 João":"2+john",
-  "3 João":"3+john","Judas":"jude","Apocalipse":"revelation"
-};
+// Mapa de abreviações para a API GitHub (thiagobodruk/biblia - ARC, CORS aberto)
+const BOOK_ABBREV={"Gênesis": "gn", "Êxodo": "ex", "Levítico": "lv", "Números": "nm", "Deuteronômio": "dt", "Josué": "js", "Juízes": "jz", "Rute": "rt", "1 Samuel": "1sm", "2 Samuel": "2sm", "1 Reis": "1rs", "2 Reis": "2rs", "1 Crônicas": "1cr", "2 Crônicas": "2cr", "Esdras": "ed", "Neemias": "ne", "Ester": "et", "Jó": "jó", "Salmos": "sl", "Provérbios": "pv", "Eclesiastes": "ec", "Cântico dos Cânticos": "ct", "Isaías": "is", "Jeremias": "jr", "Lamentações": "lm", "Ezequiel": "ez", "Daniel": "dn", "Oseias": "os", "Joel": "jl", "Amós": "am", "Obadias": "ob", "Jonas": "jn", "Miquéias": "mq", "Naum": "na", "Habacuque": "hc", "Sofonias": "sf", "Ageu": "ag", "Zacarias": "zc", "Malaquias": "ml", "Mateus": "mt", "Marcos": "mc", "Lucas": "lc", "João": "jo", "Atos": "atos", "Romanos": "rm", "1 Coríntios": "1co", "2 Coríntios": "2co", "Gálatas": "gl", "Efésios": "ef", "Filipenses": "fp", "Colossenses": "cl", "1 Tessalonicenses": "1ts", "2 Tessalonicenses": "2ts", "1 Timóteo": "1tm", "2 Timóteo": "2tm", "Tito": "tt", "Filemon": "fm", "Hebreus": "hb", "Tiago": "tg", "1 Pedro": "1pe", "2 Pedro": "2pe", "1 João": "1jo", "2 João": "2jo", "3 João": "3jo", "Judas": "jd", "Apocalipse": "ap"};
+let _bibliaCache = null; // JSON completo da Bíblia carregado uma vez
 
 // Estado
 const verseCache={}, studyCache={};
@@ -233,34 +215,45 @@ function renderChapterGrid(book){
   }
 }
 
-// ── FETCH COM TIMEOUT COMPATÍVEL ──────────────────────────────────────
-function fetchWithTimeout(url, ms){
-  return new Promise((resolve, reject)=>{
-    const timer=setTimeout(()=>reject(new Error('timeout')), ms);
-    fetch(url).then(r=>{clearTimeout(timer);resolve(r);}).catch(e=>{clearTimeout(timer);reject(e);});
-  });
+// ── BUSCAR VERSÍCULOS ─────────────────────────────────────────────────
+// Usa raw.githubusercontent.com (CORS aberto) com JSON completo da Bíblia ARC
+// Carrega o JSON uma única vez e cacheia; depois acesso é instantâneo.
+
+const BIBLIA_URL = 'https://raw.githubusercontent.com/thiagobodruk/biblia/master/json/aa.json';
+
+async function loadBiblia(){
+  if(_bibliaCache) return _bibliaCache;
+  try{
+    const r = await fetch(BIBLIA_URL);
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const raw = await r.text();
+    // Remove BOM se presente
+    const clean = raw.charCodeAt(0) === 0xFEFF ? raw.slice(1) : raw;
+    _bibliaCache = JSON.parse(clean);
+    return _bibliaCache;
+  }catch(e){
+    console.warn('Biblia JSON falhou:', e.message);
+    return null;
+  }
 }
 
 async function fetchVerses(book, chapter){
   const key=`${book}_${chapter}`;
   if(verseCache[key]) return {verses: verseCache[key], source:'cache'};
-  // 1. Dados locais embutidos
+  // 1. Dados locais embutidos (offline garantido)
   if(LOCAL[key]){verseCache[key]=LOCAL[key]; return {verses:LOCAL[key], source:'local'};}
-  // 2. API com tradução almeida
-  const apiBook=BOOK_API[book];
-  if(!apiBook) return null;
-  try{
-    const r=await fetchWithTimeout(`https://bible-api.com/${apiBook}+${chapter}?translation=almeida`,8000);
-    if(r.ok){
-      const d=await r.json();
-      if(d.verses&&d.verses.length>0){
-        const arr=d.verses.map(v=>v.text.trim());
-        verseCache[key]=arr;
-        return {verses:arr, source:'api'};
-      }
-    }
-  }catch(e){console.warn('API falhou:',e.message);}
-  return null;
+  // 2. JSON completo da Bíblia (CORS aberto, carrega uma vez)
+  const abbrev = BOOK_ABBREV[book];
+  if(!abbrev) return null;
+  const biblia = await loadBiblia();
+  if(!biblia) return null;
+  const livro = biblia.find(l => l.abbrev === abbrev);
+  if(!livro) return null;
+  const cap = livro.chapters[chapter-1];
+  if(!cap || !cap.length) return null;
+  const arr = cap.map(v => v.trim());
+  verseCache[key] = arr;
+  return {verses: arr, source:'api'};
 }
 
 // ── CARREGAR CAPÍTULO ─────────────────────────────────────────────────
@@ -420,6 +413,39 @@ function showGenericStudy(key, book, chapter){
 }
 
 // ── ÁUDIO ─────────────────────────────────────────────────────────────
+// Android Chrome para o speechSynthesis após ~15s de utterance longa.
+// Solução: quebrar cada versículo em frases curtas (máx ~100 chars)
+// e encadeá-las com onend, com keepalive de 5s entre cada fala.
+
+function splitIntoChunks(text, maxLen){
+  // Quebra no ponto final, vírgula ou espaço para não cortar palavras
+  const chunks = [];
+  while(text.length > maxLen){
+    let cut = text.lastIndexOf('. ', maxLen);
+    if(cut < 20) cut = text.lastIndexOf(', ', maxLen);
+    if(cut < 20) cut = text.lastIndexOf(' ', maxLen);
+    if(cut < 20) cut = maxLen;
+    chunks.push(text.slice(0, cut+1).trim());
+    text = text.slice(cut+1).trim();
+  }
+  if(text.length) chunks.push(text);
+  return chunks;
+}
+
+// Fila plana de chunks para leitura sequencial
+let _queue = [];
+let _queueIdx = 0;
+let _verseOfChunk = []; // índice do versículo de cada chunk
+
+function buildQueue(){
+  _queue = [];
+  _verseOfChunk = [];
+  verses.forEach((v, vi)=>{
+    const chunks = splitIntoChunks(v, 120);
+    chunks.forEach(c=>{ _queue.push(c); _verseOfChunk.push(vi); });
+  });
+}
+
 function toggleAudio(){
   if(!verses.length) return;
   isPlaying?pauseAudio():startAudio();
@@ -431,70 +457,112 @@ function startAudio(){
     return;
   }
   window.speechSynthesis.cancel();
+  clearInterval(window._keepAlive);
   isPlaying=true;
-  if(currentVerseIdx<0) currentVerseIdx=0;
+
+  // Se retomando do pause, manter posição; senão reiniciar
+  if(_queueIdx <= 0 || currentVerseIdx < 0){
+    buildQueue();
+    _queueIdx = 0;
+    currentVerseIdx = 0;
+  }
+
   document.getElementById('playBtn').textContent='⏸';
-  readVerse(currentVerseIdx);
+  speakChunk(_queueIdx);
 }
 
 function pauseAudio(){
   window.speechSynthesis.cancel();
+  clearInterval(window._keepAlive);
   isPlaying=false;
   document.getElementById('playBtn').textContent='▶';
-  document.getElementById('audioStatus').textContent=`⏸ Pausado no versículo ${currentVerseIdx+1}`;
+  document.getElementById('audioStatus').textContent=
+    `⏸ Pausado no versículo ${currentVerseIdx+1}`;
 }
 
 function stopAudio(){
   if('speechSynthesis' in window) window.speechSynthesis.cancel();
   clearInterval(window._keepAlive);
-  isPlaying=false; currentVerseIdx=-1;
+  isPlaying=false; currentVerseIdx=-1; _queueIdx=0;
   document.querySelectorAll('.verse').forEach(el=>el.classList.remove('reading'));
   const btn=document.getElementById('playBtn');
   if(btn) btn.textContent='▶';
 }
 
-function readVerse(idx){
-  if(!isPlaying||idx>=verses.length){
-    stopAudio();
-    document.getElementById('audioStatus').textContent='✓ Leitura concluída';
+function speakChunk(idx){
+  if(!isPlaying || idx >= _queue.length){
+    if(isPlaying){
+      stopAudio();
+      document.getElementById('audioStatus').textContent='✓ Leitura concluída';
+    }
     return;
   }
-  currentVerseIdx=idx;
-  document.querySelectorAll('.verse').forEach(el=>el.classList.remove('reading'));
-  const el=document.getElementById(`verse_${idx}`);
-  if(el){el.classList.add('reading');el.scrollIntoView({behavior:'smooth',block:'center'});}
-  document.getElementById('audioStatus').textContent=`▶ Versículo ${idx+1} de ${verses.length}`;
 
-  utterance=new SpeechSynthesisUtterance(verses[idx]);
-  utterance.lang='pt-BR'; utterance.rate=playbackSpeed;
+  _queueIdx = idx;
+  const vi = _verseOfChunk[idx];
 
-  // Selecionar voz pt-BR disponível
-  const voices=window.speechSynthesis.getVoices();
-  const ptVoice=voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith('pt'));
-  if(ptVoice) utterance.voice=ptVoice;
+  // Atualizar highlight de versículo ao mudar
+  if(vi !== currentVerseIdx){
+    currentVerseIdx = vi;
+    document.querySelectorAll('.verse').forEach(el=>el.classList.remove('reading'));
+    const el = document.getElementById(`verse_${vi}`);
+    if(el){ el.classList.add('reading'); el.scrollIntoView({behavior:'smooth',block:'center'}); }
+    document.getElementById('audioStatus').textContent=
+      `▶ Versículo ${vi+1} de ${verses.length}`;
+  }
 
-  utterance.onend=()=>{ if(isPlaying) readVerse(idx+1); };
-  utterance.onerror=(e)=>{ if(e.error!=='interrupted'&&isPlaying) setTimeout(()=>readVerse(idx+1),300); };
+  // Selecionar voz pt-BR uma vez
+  if(!window._ptVoice){
+    const voices = window.speechSynthesis.getVoices();
+    window._ptVoice = voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith('pt')) || null;
+  }
+
+  utterance = new SpeechSynthesisUtterance(_queue[idx]);
+  utterance.lang = 'pt-BR';
+  utterance.rate = playbackSpeed;
+  if(window._ptVoice) utterance.voice = window._ptVoice;
+
+  utterance.onend = ()=>{
+    clearInterval(window._keepAlive);
+    if(isPlaying) speakChunk(idx+1);
+  };
+
+  utterance.onerror = (e)=>{
+    clearInterval(window._keepAlive);
+    if(e.error !== 'interrupted' && isPlaying){
+      setTimeout(()=>speakChunk(idx+1), 200);
+    }
+  };
 
   window.speechSynthesis.speak(utterance);
 
-  // Keepalive Android Chrome (evita pausa automática)
+  // Keepalive agressivo a cada 5s: Android Chrome cancela utterances longas
   clearInterval(window._keepAlive);
-  window._keepAlive=setInterval(()=>{
-    if(window.speechSynthesis.speaking){
-      window.speechSynthesis.pause();
+  window._keepAlive = setInterval(()=>{
+    if(!isPlaying){ clearInterval(window._keepAlive); return; }
+    if(window.speechSynthesis.paused){
       window.speechSynthesis.resume();
-    } else {
+    } else if(!window.speechSynthesis.speaking && !window.speechSynthesis.pending){
+      // Synth morreu silenciosamente — retomar do chunk atual
       clearInterval(window._keepAlive);
+      if(isPlaying) setTimeout(()=>speakChunk(_queueIdx), 100);
     }
-  },9000);
+  }, 5000);
 }
+
+// Manter compatibilidade com readVerse (usado internamente antes)
+function readVerse(idx){ currentVerseIdx=idx; }
 
 function setSpeed(spd, btn){
   playbackSpeed=spd;
   document.querySelectorAll('.speed-btn').forEach(b=>b.classList.remove('active-speed'));
   btn.classList.add('active-speed');
-  if(isPlaying){pauseAudio();startAudio();}
+  if(isPlaying){
+    window.speechSynthesis.cancel();
+    clearInterval(window._keepAlive);
+    // Retomar do chunk atual com nova velocidade
+    setTimeout(()=>speakChunk(_queueIdx), 100);
+  }
 }
 
 // ── UI ────────────────────────────────────────────────────────────────
