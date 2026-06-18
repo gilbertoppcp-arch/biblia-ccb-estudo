@@ -59,6 +59,59 @@ main{display:flex;flex-direction:column;overflow:hidden;height:100%}
 .verse.reading{background:rgba(139,58,26,.12);border-left:3px solid var(--rust);padding-left:8px}
 .verse.highlight{background:rgba(184,146,42,.18)}
 .v-num{font-family:'Cinzel',serif;font-size:10px;font-weight:600;color:var(--gold);vertical-align:super;margin-right:3px;font-style:normal}
+
+/* ── ESTUDO INTERATIVO ── */
+.pillar-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.pillar-btn{padding:7px 13px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);transition:all .15s;-webkit-tap-highlight-color:transparent}
+.pillar-btn.active-p{color:var(--white);border-color:transparent}
+.pillar-btn.p-esp.active-p{background:#5C4A9A}
+.pillar-btn.p-alma.active-p{background:#2A6B5C}
+.pillar-btn.p-mat.active-p{background:#8B3A1A}
+.pillar-btn.p-esp:not(.active-p):hover{border-color:#5C4A9A;color:#5C4A9A}
+.pillar-btn.p-alma:not(.active-p):hover{border-color:#2A6B5C;color:#2A6B5C}
+.pillar-btn.p-mat:not(.active-p):hover{border-color:#8B3A1A;color:#8B3A1A}
+.pillar-icon{font-size:14px;margin-right:4px}
+.qa-list{display:flex;flex-direction:column;gap:12px}
+.qa-item{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.qa-question{padding:13px 16px;cursor:pointer;display:flex;align-items:flex-start;gap:10px;-webkit-tap-highlight-color:transparent}
+.qa-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--white);flex-shrink:0;margin-top:1px}
+.qa-num.c-esp{background:#5C4A9A}
+.qa-num.c-alma{background:#2A6B5C}
+.qa-num.c-mat{background:#8B3A1A}
+.qa-q-text{font-size:14px;font-weight:600;color:var(--ink);line-height:1.5;flex:1}
+.qa-arrow{color:var(--muted);font-size:12px;flex-shrink:0;transition:transform .2s;margin-top:3px}
+.qa-arrow.open{transform:rotate(90deg)}
+.qa-answer{display:none;padding:0 16px 14px 50px;font-size:13px;line-height:1.7;color:#3C3020;border-top:1px solid var(--border);padding-top:12px}
+.qa-answer.show{display:block}
+.qa-verse-ref{display:inline-block;background:rgba(184,146,42,.12);color:var(--sepia);font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;margin-bottom:8px;font-family:'Cinzel',serif}
+.pillar-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.pillar-header-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pillar-header-icon.bg-esp{background:rgba(92,74,154,.12)}
+.pillar-header-icon.bg-alma{background:rgba(42,107,92,.12)}
+.pillar-header-icon.bg-mat{background:rgba(139,58,26,.12)}
+.pillar-header h4{font-family:'Cinzel',serif;font-size:13px;font-weight:600}
+.pillar-header h4.tc-esp{color:#5C4A9A}
+.pillar-header h4.tc-alma{color:#2A6B5C}
+.pillar-header h4.tc-mat{color:#8B3A1A}
+.pillar-header p{font-size:11px;color:var(--muted);margin-top:2px}
+.study-gen-btn{width:100%;padding:13px;border:none;border-radius:8px;font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:.06em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent;margin-top:6px;transition:all .15s}
+.study-gen-btn.btn-esp{background:#5C4A9A;color:#fff}
+.study-gen-btn.btn-alma{background:#2A6B5C;color:#fff}
+.study-gen-btn.btn-mat{background:#8B3A1A;color:#fff}
+.study-gen-btn:active{opacity:.8}
+.study-gen-btn:disabled{opacity:.5;cursor:not-allowed}
+.pillar-loading{display:flex;flex-direction:column;align-items:center;gap:10px;padding:30px 20px;color:var(--muted);font-size:13px}
+.score-bar{margin-top:16px;padding:14px;background:var(--parchment);border-radius:8px;border:1px solid var(--border)}
+.score-bar h5{font-family:'Cinzel',serif;font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.score-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.score-label{font-size:11px;color:var(--muted);width:110px;flex-shrink:0}
+.score-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.score-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.score-fill.f-esp{background:#5C4A9A}
+.score-fill.f-alma{background:#2A6B5C}
+.score-fill.f-mat{background:#8B3A1A}
+.score-pct{font-size:11px;font-weight:600;color:var(--sepia);width:30px;text-align:right}
+
 .loading-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:40px 20px;color:var(--muted);font-size:13px;text-align:center}
 .spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -308,11 +361,15 @@ function renderContent(book, chapter, versesArr, srcLabel, srcClass){
     <div class="tabs">
       <div class="tab active" onclick="switchTab('text')">📖 Texto</div>
       <div class="tab" onclick="switchTab('study')">✦ Interpretação</div>
+      <div class="tab" onclick="switchTab('qa')">📝 Estudo</div>
     </div>
     <div id="tabText" class="tab-panel active">
       <div class="verses">
         ${versesArr.map((v,i)=>`<span class="verse" id="verse_${i}" onclick="highlightVerse(${i})"><em class="v-num">${i+1}</em>${v}</span>`).join('')}
       </div>
+    </div>
+    <div id="tabQa" class="tab-panel">
+      <div id="qaBody">${renderQaInitial(key)}</div>
     </div>
     <div id="tabStudy" class="tab-panel">
       <div class="interp-card">
@@ -566,11 +623,247 @@ function setSpeed(spd, btn){
 }
 
 // ── UI ────────────────────────────────────────────────────────────────
+
+// ════════════════════════════════════════════════════════
+// ESTUDO INTERATIVO — 3 PILARES
+// ════════════════════════════════════════════════════════
+const qaCache = {}; // key -> {espiritual:[], alma:[], material:[]}
+let _activePillar = 'espiritual';
+
+const PILLAR_CONFIG = {
+  espiritual:{
+    label:'Vida Espiritual', icon:'🕊', btnClass:'btn-esp', numClass:'c-esp',
+    bgClass:'bg-esp', tcClass:'tc-esp', fillClass:'f-esp', pillarClass:'p-esp',
+    desc:'Fé, oração, adoração e crescimento espiritual'
+  },
+  alma:{
+    label:'Vida da Alma', icon:'💎', btnClass:'btn-alma', numClass:'c-alma',
+    bgClass:'bg-alma', tcClass:'tc-alma', fillClass:'f-alma', pillarClass:'p-alma',
+    desc:'Emoções, pensamentos, caráter e relações'
+  },
+  material:{
+    label:'Vida Material', icon:'🏡', btnClass:'btn-mat', numClass:'c-mat',
+    bgClass:'bg-mat', tcClass:'tc-mat', fillClass:'f-mat', pillarClass:'p-mat',
+    desc:'Trabalho, família, finanças e cotidiano'
+  }
+};
+
+function renderQaInitial(key){
+  return `
+    <div style="text-align:center;padding:16px 0 8px">
+      <p style="color:var(--muted);font-size:13px;margin-bottom:20px;line-height:1.6">
+        Estudo interativo com perguntas e respostas nos três pilares da vida cristã.<br>
+        Escolha um pilar para começar:
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="study-gen-btn btn-esp" onclick="generateQa('${key}','espiritual')">
+          🕊 Vida Espiritual
+        </button>
+        <button class="study-gen-btn btn-alma" onclick="generateQa('${key}','alma')">
+          💎 Vida da Alma
+        </button>
+        <button class="study-gen-btn btn-mat" onclick="generateQa('${key}','material')">
+          🏡 Vida Material
+        </button>
+      </div>
+    </div>`;
+}
+
+function renderQaPanel(key, pillar){
+  const cfg = PILLAR_CONFIG[pillar];
+  const data = qaCache[key];
+  const questions = data ? data[pillar] : null;
+
+  let body = '';
+  if(!questions){
+    body = `<div class="pillar-loading">
+      <div class="spinner"></div>
+      <p>Gerando perguntas de ${cfg.label}...</p>
+    </div>`;
+  } else {
+    body = `<div class="qa-list">
+      ${questions.map((qa,i)=>`
+        <div class="qa-item">
+          <div class="qa-question" onclick="toggleQa(this)">
+            <span class="qa-num ${cfg.numClass}">${i+1}</span>
+            <span class="qa-q-text">${qa.p}</span>
+            <span class="qa-arrow">▶</span>
+          </div>
+          <div class="qa-answer">
+            <span class="qa-verse-ref">${qa.ref}</span>
+            <p>${qa.r}</p>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  // Calcular progresso (quantos pilares já foram gerados)
+  const generated = data ? Object.keys(data).filter(p=>data[p]&&data[p].length>0) : [];
+  const scoreBar = generated.length > 0 ? `
+    <div class="score-bar">
+      <h5>Progresso do Estudo</h5>
+      ${Object.entries(PILLAR_CONFIG).map(([p,c])=>`
+        <div class="score-row">
+          <span class="score-label">${c.icon} ${c.label.split(' ').slice(-1)[0]}</span>
+          <div class="score-track"><div class="score-fill ${c.fillClass}" style="width:${generated.includes(p)?'100':'0'}%"></div></div>
+          <span class="score-pct">${generated.includes(p)?'✓':''}</span>
+        </div>`).join('')}
+    </div>` : '';
+
+  return `
+    <div class="pillar-tabs">
+      ${Object.entries(PILLAR_CONFIG).map(([p,c])=>`
+        <button class="pillar-btn ${c.pillarClass}${p===pillar?' active-p':''}"
+          onclick="switchPillar('${key}','${p}')">
+          <span class="pillar-icon">${c.icon}</span>${c.label.split(' ').slice(-1)[0]}
+        </button>`).join('')}
+    </div>
+    <div class="pillar-header">
+      <div class="pillar-header-icon ${cfg.bgClass}">${cfg.icon}</div>
+      <div>
+        <h4 class="${cfg.tcClass}">${cfg.label}</h4>
+        <p>${cfg.desc}</p>
+      </div>
+    </div>
+    ${body}
+    ${!questions ? `
+    <button class="study-gen-btn ${cfg.btnClass}" style="margin-top:14px"
+      onclick="generateQa('${key}','${pillar}')">
+      ✦ Gerar Perguntas
+    </button>` : `
+    <button class="study-gen-btn ${cfg.btnClass}" style="margin-top:14px;opacity:.7"
+      onclick="generateQa('${key}','${pillar}')">
+      ↻ Regenerar
+    </button>`}
+    ${scoreBar}`;
+}
+
+function switchPillar(key, pillar){
+  _activePillar = pillar;
+  const qaBody = document.getElementById('qaBody');
+  if(qaBody) qaBody.innerHTML = renderQaPanel(key, pillar);
+  switchTab('qa');
+}
+
+function toggleQa(el){
+  const answer = el.nextElementSibling;
+  const arrow = el.querySelector('.qa-arrow');
+  const isOpen = answer.classList.contains('show');
+  // Fechar todos primeiro
+  document.querySelectorAll('.qa-answer.show').forEach(a=>{
+    a.classList.remove('show');
+    a.previousElementSibling.querySelector('.qa-arrow').classList.remove('open');
+  });
+  if(!isOpen){
+    answer.classList.add('show');
+    arrow.classList.add('open');
+  }
+}
+
+async function generateQa(key, pillar){
+  _activePillar = pillar;
+  if(!qaCache[key]) qaCache[key] = {};
+  qaCache[key][pillar] = null; // reset para mostrar loading
+
+  const qaBody = document.getElementById('qaBody');
+  if(qaBody) qaBody.innerHTML = renderQaPanel(key, pillar);
+  switchTab('qa');
+
+  const parts = key.split('_');
+  const book = parts.slice(0,-1).join('_');
+  const chapter = parts[parts.length-1];
+  const cached = verseCache[key];
+  const verseText = cached
+    ? cached.map((v,i)=>`${i+1}. ${v}`).slice(0,20).join('\n')
+    : `${book} capítulo ${chapter}`;
+
+  const pillarDesc = {
+    espiritual: 'fé, oração, adoração, santidade, vida no Espírito, crescimento espiritual e relacionamento com Deus',
+    alma: 'emoções, pensamentos, caráter, identidade, saúde mental, relações interpessoais e transformação interior',
+    material: 'trabalho, família, finanças, cotidiano, mordomia, responsabilidades práticas e testemunho no mundo'
+  };
+
+  const prompt = `Você é um professor de estudo bíblico da Congregação Cristã no Brasil (CCB), especializado na tradução ARC. Crie 5 perguntas de estudo sobre "${book} capítulo ${chapter}" focadas no pilar: ${pillarDesc[pillar]}.
+
+Versículos:
+${verseText}
+
+Responda SOMENTE em JSON válido, sem markdown:
+{"perguntas":[
+  {"p":"Pergunta 1?","ref":"${book} ${chapter}:X","r":"Resposta completa em 2-3 frases aplicadas ao pilar ${pillar}"},
+  {"p":"Pergunta 2?","ref":"${book} ${chapter}:X","r":"Resposta completa"},
+  {"p":"Pergunta 3?","ref":"${book} ${chapter}:X","r":"Resposta completa"},
+  {"p":"Pergunta 4?","ref":"${book} ${chapter}:X","r":"Resposta completa"},
+  {"p":"Pergunta 5?","ref":"${book} ${chapter}:X","r":"Resposta completa"}
+]}`;
+
+  try{
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6', max_tokens:1200,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d = await r.json();
+    const raw = d.content.map(b=>b.text||'').join('');
+    const m = raw.replace(/```json|```/g,'').trim().match(/\{[\s\S]*\}/);
+    if(!m) throw new Error('JSON não encontrado');
+    const parsed = JSON.parse(m[0]);
+    if(!parsed.perguntas||!parsed.perguntas.length) throw new Error('Perguntas vazias');
+
+    if(!qaCache[key]) qaCache[key]={};
+    qaCache[key][pillar] = parsed.perguntas;
+
+    const qb = document.getElementById('qaBody');
+    if(qb) qb.innerHTML = renderQaPanel(key, pillar);
+
+  }catch(e){
+    // Fallback: gerar perguntas genéricas localmente
+    const fallback = generateLocalQa(book, chapter, pillar, cached);
+    if(!qaCache[key]) qaCache[key]={};
+    qaCache[key][pillar] = fallback;
+    const qb = document.getElementById('qaBody');
+    if(qb) qb.innerHTML = renderQaPanel(key, pillar);
+  }
+}
+
+function generateLocalQa(book, chapter, pillar, verses){
+  const ref = `${book} ${chapter}`;
+  const v1 = verses && verses[0] ? verses[0].substring(0,60)+'...' : ref+':1';
+  const templates = {
+    espiritual:[
+      {p:`Como este capítulo fortalece sua fé e confiança em Deus?`,ref:`${ref}:1`,r:`${ref} revela aspectos do caráter de Deus que nos convidam à fé. Ao meditar neste texto, identificamos promessas que sustentam nossa confiança em Deus mesmo nas adversidades. A fé cresce ao conhecermos mais profundamente quem Deus é.`},
+      {p:`Que práticas espirituais este capítulo nos convida a desenvolver?`,ref:`${ref}:1`,r:`O texto aponta para disciplinas espirituais como oração, meditação na Palavra e adoração. Estas práticas nos aproximam de Deus e nos transformam à sua imagem, tornando-nos mais sensíveis à voz do Espírito Santo.`},
+      {p:`Como a presença de Deus é revelada neste capítulo?`,ref:`${ref}:1`,r:`Deus se revela de forma ativa neste capítulo — seja por suas obras, suas palavras ou seu cuidado. Reconhecer essa presença nos leva à adoração e à dependência renovada de Deus em nossa vida cotidiana.`},
+      {p:`Que obstáculos à vida espiritual este texto nos ajuda a superar?`,ref:`${ref}:1`,r:`Este capítulo identifica tendências da carne ou do mundo que se opõem ao crescimento espiritual, e aponta para os recursos que Deus oferece — seu Espírito, sua Palavra e a comunidade de fé — para que possamos vencê-los.`},
+      {p:`Como aplicar os ensinamentos deste capítulo em sua vida de oração?`,ref:`${ref}:1`,r:`As verdades reveladas neste capítulo devem alimentar nossa oração. Podemos usá-las como base para agradecer, interceder e pedir a Deus que aplique essas verdades em nossa vida e nas vidas de quem amamos.`}
+    ],
+    alma:[
+      {p:`Que emoções ou estados de alma este capítulo aborda ou desperta?`,ref:`${ref}:1`,r:`${ref} toca dimensões profundas da alma — medo, esperança, gratidão, arrependimento ou alegria. Reconhecer e nomear essas emoções à luz da Palavra nos ajuda a processá-las de forma saudável, levando-as a Deus em oração.`},
+      {p:`Como este texto contribui para a renovação do seu pensamento?`,ref:`${ref}:1`,r:`A Palavra de Deus renova a mente ao substituir mentiras por verdades. Este capítulo oferece perspectivas divinas sobre a realidade que contradizem o pensamento mundano, convidando-nos a ver a vida com os olhos de Deus.`},
+      {p:`Que aspectos do caráter cristão são enfatizados neste capítulo?`,ref:`${ref}:1`,r:`O texto destaca virtudes como paciência, humildade, amor, fidelidade ou coragem. O Espírito Santo usa a Palavra para desenvolver esses frutos em nós, transformando nosso caráter à semelhança de Cristo.`},
+      {p:`Como este capítulo nos ajuda a lidar com sofrimentos e crises emocionais?`,ref:`${ref}:1`,r:`${ref} oferece fundamentos para a estabilidade emocional: a fidelidade de Deus, a perspectiva eterna, a comunhão com irmãos e a esperança da redenção. Estas verdades ancoram a alma quando as circunstâncias são adversas.`},
+      {p:`De que forma este texto impacta seus relacionamentos mais próximos?`,ref:`${ref}:1`,r:`Os princípios deste capítulo se aplicam diretamente às nossas relações. Ao internalizá-los, somos desafiados a amar melhor, a perdoar com mais facilidade e a servir com mais genuinidade as pessoas ao nosso redor.`}
+    ],
+    material:[
+      {p:`Que princípios práticos este capítulo oferece para o trabalho e a carreira?`,ref:`${ref}:1`,r:`${ref} nos lembra que o trabalho é vocação dada por Deus, não apenas meio de sustento. O cristão é chamado a trabalhar com excelência, integridade e como serviço ao Senhor, transformando o ambiente profissional pelo testemunho.`},
+      {p:`Como este texto orienta o uso dos recursos financeiros?`,ref:`${ref}:1`,r:`A Bíblia ensina que somos mordomos — não donos — dos recursos que Deus nos confiou. Este capítulo nos convida a usar o dinheiro e os bens de forma generosa, responsável e alinhada com os valores do Reino de Deus.`},
+      {p:`Que impacto este capítulo deve ter na vida familiar do cristão?`,ref:`${ref}:1`,r:`${ref} contém verdades que fortalecem os pilares da família cristã: amor sacrificial, respeito mútuo, perdão, comunicação e propósito compartilhado. Aplicar esses princípios transforma o lar em reflexo do amor de Deus.`},
+      {p:`Como viver os valores deste capítulo no cotidiano da sociedade?`,ref:`${ref}:1`,r:`O cristão é chamado a ser sal e luz no mundo. Os princípios deste texto nos equipam para influenciar positivamente nossa comunidade, local de trabalho e círculo social, sendo testemunho vivo do Evangelho.`},
+      {p:`Que mudanças práticas este capítulo sugere para sua rotina diária?`,ref:`${ref}:1`,r:`A Palavra não é só para ser ouvida, mas praticada. ${ref} sugere ajustes concretos em prioridades, hábitos e relacionamentos. Identificar uma área específica e agir sobre ela é o primeiro passo para que a fé se torne visível na vida material.`}
+    ]
+  };
+  return templates[pillar];
+}
+
 function switchTab(name){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['text','study'][i]===name));
-  ['tabText','tabStudy'].forEach((id,i)=>{
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['text','study','qa'][i]===name));
+  ['tabText','tabStudy','tabQa'].forEach((id,i)=>{
     const el=document.getElementById(id);
-    if(el) el.classList.toggle('active',['text','study'][i]===name);
+    if(el) el.classList.toggle('active',['text','study','qa'][i]===name);
   });
 }
 function highlightVerse(i){
